@@ -4,7 +4,7 @@ description: "Query a vector store in WSO2 Integration Platform to retrieve rele
 keywords: [wso2 integrator, rag, retrieval, vector store, query]
 ---
 
-# RAG retrieval
+# RAG Retrieval
 
 Retrieval-augmented generation (RAG) retrieval searches a vector store for the most relevant information that answers a user query. Use it after ingestion to find supporting chunks for a response.
 
@@ -15,7 +15,7 @@ Retrieval-augmented generation (RAG) retrieval searches a vector store for the m
 
 To retrieve chunks that have already been ingested, open your organization from the **Organization** dropdown in the console header. In the left navigation menu, click **RAG**, then select **Retrieval**.
 
-### Step 1: Initialize the vector store
+### Step 1: initialize the vector store
 
 1. Select `Pinecone` as the vector database.
 2. Enter the key in **API Key**.
@@ -27,7 +27,7 @@ To create a key, see the [Pinecone API key documentation](https://docs.pinecone.
 3. Enter the **Collection name** to retrieve from.
 4. Click **Next**.
 
-### Step 2: Configure the embedding model
+### Step 2: configure the embedding model
 
 1. Select `text-embedding-ada-002` from the **OpenAI** provider list.
 2. Enter the key in **Embedding model API key**.
@@ -38,7 +38,7 @@ To create a key, see the [OpenAI embeddings documentation](https://platform.open
 
 3. Click **Next**.
 
-### Step 3: Query and retrieve chunks
+### Step 3: query and retrieve chunks
 
 1. Enter a query that matches the content of ingested files.
 2. Review **Maximum chunks to retrieve** and **Minimum similarity threshold**. Update if needed.
@@ -56,7 +56,7 @@ WSO2 Cloud - Integration Platform's retrieval process can apply reranking models
 
 ![Retrieve relevant chunks from the vector store](/img/manage/cloud/rag-ingestion/rag-retrieval-light.gif)
 
-### Step 4: Enable reranking (optional)
+### Step 4: enable reranking (optional)
 
 Reranking reorders retrieved chunks by contextual relevance, improving the quality of results passed to your LLM. WSO2 Cloud supports reranking with Cohere.
 
@@ -71,5 +71,5 @@ For more information, see the [Cohere documentation](https://dashboard.cohere.co
 
 - [RAG ingestion](./ingestion.md) — Configure scheduled ingestion for your vector store.
 - [RAG service](./service.md) — Use the service API to retrieve chunks programmatically.
-- [Managed PostgreSQL and vector databases](./vector-databases.md) — Provision the vector database used for retrieval.
+- [Managed vector databases](./vector-databases.md) — Provision the vector database used for retrieval.
 
