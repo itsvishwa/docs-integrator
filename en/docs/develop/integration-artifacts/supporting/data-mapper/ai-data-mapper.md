@@ -1,0 +1,211 @@
+---
+sidebar_position: 9
+title: AI data mapping
+description: Generate complete, type-safe Ballerina transformation code between any two data structures using AI in WSO2 Integrator.
+keywords: [wso2 integrator, data mapper, ai data mapping, auto map, field mapping, transformation]
+---
+
+import ThemedImage from '@theme/ThemedImage';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# AI data mapping
+
+The AI Data Mapper generates complete, compilable Ballerina transformation code between any two data structures without manual field-by-field matching. Use it when schemas are large or complex, such as healthcare, insurance, or banking data structures with hundreds of fields, deeply nested records, or domain-specific formats.
+
+For the Data Mapper editor and manual mapping, see [Data Mapper editor](../../../understand-ide/editors/datamapper-editor.md).
+
+## How it works
+
+The following example maps a `Student` record to a `PersonalProfile` record.
+
+<Tabs>
+<TabItem value="ui" label="Visual designer" default>
+
+1. In the **Data Mappers** section of the sidebar, click **transform** to open it in the Data Mapper editor. The canvas loads the `Student` input schema on the left and the `PersonalProfile` output schema on the right.
+
+    <ThemedImage
+        alt="Data Mapper canvas showing the Student input schema on the left and the PersonalProfile output schema on the right with no mappings"
+        sources={{
+            light: useBaseUrl('/img/develop/integration-artifacts/supporting/data-mapper/ai-data-mapper-canvas.png'),
+            dark: useBaseUrl('/img/develop/integration-artifacts/supporting/data-mapper/ai-data-mapper-canvas.png'),
+        }}
+    />
+
+2. In the top-right corner of the canvas, select **Auto Map**. The WSO2 Integrator Copilot panel opens alongside the canvas with a `/datamap` command preloaded.
+
+    <ThemedImage
+        alt="WSO2 Integrator Copilot panel open alongside the Data Mapper canvas with the /datamap command preloaded in the input field"
+        sources={{
+            light: useBaseUrl('/img/develop/integration-artifacts/supporting/data-mapper/ai-data-mapper-copilot-command.png'),
+            dark: useBaseUrl('/img/develop/integration-artifacts/supporting/data-mapper/ai-data-mapper-copilot-command.png'),
+        }}
+    />
+
+3. Submit the command. The Copilot reads the project files, generates field mappings based on the input and output types, repairs the generated code, and integrates it into your workspace. When complete, mapping lines appear between the matched fields on the canvas.
+
+    <ThemedImage
+        alt="Data Mapper canvas showing generated field mapping lines connecting the Student fields to the PersonalProfile fields, with the completion message in the Copilot panel"
+        sources={{
+            light: useBaseUrl('/img/develop/integration-artifacts/supporting/data-mapper/ai-data-mapper-result.png'),
+            dark: useBaseUrl('/img/develop/integration-artifacts/supporting/data-mapper/ai-data-mapper-result.png'),
+        }}
+    />
+
+</TabItem>
+<TabItem value="code" label="Ballerina code">
+
+<h2>Define data types</h2>
+
+Create a file named `types.bal` to define the input and output record types:
+
+```ballerina
+type Student record {
+    int id;
+    string studentName;
+    int age;
+    string gender;
+    string[] semesterGPA;
+    string academicMajor;
+    Student[] roommates;
+    string address;
+};
+
+type PersonalProfile record {
+    int id;
+    Bio bio;
+    AcademicRecord academicRecord;
+    Accommodation accommodationDetails;
+};
+
+type Bio record {
+    string name;
+    string gender;
+    int age;
+};
+
+type AcademicRecord record {
+    string major;
+    string[] semesterGPA;
+};
+
+type Accommodation record {
+    int numberOfRoommates;
+    string address;
+};
+```
+
+<h2>Define the data mapper function</h2>
+
+Define the `transform` function stub in `datamappings.bal`:
+
+```ballerina
+function transform(Student student) returns PersonalProfile => {};
+```
+
+Select **Visualize** above the `transform` function to open it in the Data Mapper editor. In the editor, select **Auto Map** to generate the field mappings. The function is updated with the generated implementation:
+
+```ballerina
+function transform(Student student) returns PersonalProfile => {
+    id: student.id,
+    bio: {name: student.studentName, gender: student.gender, age: student.age},
+    academicRecord: {major: student.academicMajor, semesterGPA: student.semesterGPA},
+    accommodationDetails: {numberOfRoommates: student.roommates.length(), address: student.address}
+};
+```
+
+</TabItem>
+</Tabs>
+
+## Features
+
+### Automated mapping generation
+
+Upload input and output record definitions to generate complete mappings. The system analyzes:
+
+- Field names and naming conventions.
+- Semantic relationships between fields.
+- Nested data structures.
+- Array types and cardinality.
+- Optional and nullable fields.
+- Domain-specific patterns such as those common in healthcare contexts.
+
+The generated mapping code is produced in seconds and follows established engineering practices.
+
+### Advanced expression generation
+
+The AI Data Mapper handles complex transformation scenarios:
+
+- **Type conversions**: Automatic conversion between primitive types such as `string` to `int` or `decimal` to `float`.
+- **Optional field handling**: Null-safety checks and proper optional field management.
+- **Nested record transformation**: Deep structure mapping with proper path resolution.
+- **Array-to-array mappings**: Element-wise transformations with appropriate iteration logic.
+- **Conditional logic**: Field presence validation and default value assignment.
+
+### Accuracy through supporting documentation
+
+Upload reference materials to improve mapping accuracy. While schema-only analysis is supported, providing additional documentation helps the system understand field relationships and business rules.
+
+Supported formats:
+
+- PDF documents
+- Images (JPEG, JPG, PNG)
+- CSV files
+- Text files
+
+For complex mapping scenarios involving large schemas or domain-specific requirements, upload multiple documents simultaneously. The system analyzes the combined documentation to generate more accurate, context-aware transformations.
+
+### Sub-mapping reuse
+
+The AI Data Mapper detects existing mapping expressions in your codebase and reuses them where applicable. This reduces code duplication, ensures consistent transformation logic, and keeps the codebase compact.
+
+For example, if a function already maps `firstName` and `lastName` to a `fullName` field:
+
+```ballerina
+type Person record {|
+    string firstName;
+    string lastName;
+|};
+
+type Student record {|
+    string fullName;
+|};
+
+function transform(Person person) returns Student =>
+    let string fullNameOfPerson = person.firstName + " " + person.lastName in {
+        fullName: fullNameOfPerson
+    };
+```
+
+When generating new mappings that require the same full name transformation, the system reuses the existing `fullNameOfPerson` expression rather than regenerating `firstName + " " + lastName` inline. This ensures consistency and reduces redundant code across your transformations.
+
+### Function extraction for large schemas
+
+For mappings with extensive field counts (hundreds to thousands of fields), the system extracts helper functions to maintain code readability and comply with language server constraints. Complex transformations involving union types, deeply nested structures, and array-to-array operations are automatically decomposed into reusable functions.
+
+### Code validation
+
+All generated mappings are validated by the Ballerina Language Server before output, ensuring:
+
+- Syntactic correctness.
+- Type safety compliance.
+- Proper import statements.
+- Correct handling of reserved keywords.
+
+The output is guaranteed to be compilable code.
+
+## Responsible use
+
+Large language models can produce unexpected results when processing highly domain-specific or atypical schema patterns. Follow these practices to ensure accuracy:
+
+- Review all generated mappings before deploying to production.
+- Test with representative data samples that reflect actual use cases.
+- Verify that the generated transformation logic aligns with your business requirements.
+- Provide feedback on incorrect or incomplete mappings to support continuous improvement.
+
+## What's next
+
+- [Data Mapper editor](../../../understand-ide/editors/datamapper-editor.md) — Open, configure, and work with the visual mapping canvas.
+- [Data mapper](./data-mapper.md) — End-to-end guide to creating and using data mappers.
+- [Expression editor](../../../understand-ide/editors/expression-editor.md) — Write custom expressions for individual field mappings.
