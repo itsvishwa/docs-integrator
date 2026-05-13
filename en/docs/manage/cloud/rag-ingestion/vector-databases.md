@@ -1,5 +1,5 @@
 ---
-title: "Managed Vector databases"
+title: "Managed Vector Databases"
 description: "Create and manage vector databases in WSO2 Integration Platform."
 keywords: [wso2 integrator, wso2 integration platform, managed database, postgresql, vector database]
 ---
