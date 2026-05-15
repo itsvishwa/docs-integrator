@@ -94,18 +94,26 @@ export BALLERINA_MAX_POOL_SIZE=16
 bal run .
 ```
 
-Raise the value when long-running blocking calls (legacy JDBC drivers, external Java libraries) are tying up scheduler workers and starving other strands.
+Standard Ballerina I/O (HTTP, SQL via Ballerina libraries) is non-blocking, so the default pool is usually enough. Raise the value when long-running blocking calls (legacy JDBC drivers, external Java libraries) tie up scheduler workers and starve other strands. If the blocking call is from a single library, wrap it in a `worker` so the block is isolated from the main strand.
+
+This is distinct from the SQL connection pool (`maxOpenConnections`) and the HTTP client pool (`maxActiveConnections`); those control connections to external services, not the scheduler's worker threads.
 
 ### Diagnose thread starvation
 
-When requests stop progressing even though the service is up, and latency climbs linearly, the scheduler is most likely starved.
+Symptoms: new HTTP requests stop being accepted even though the service is up, and latency climbs linearly with concurrent requests.
 
-- Capture a strand dump with `kill -SIGTRAP <pid>` and look for blocked `ballerina-scheduler` strands. See [Strand dump analysis](strand-dump-analysis.md).
-- Capture a JVM thread dump with `jstack <pid>` for the OS-thread view.
+- Capture a strand dump with `kill -SIGTRAP <pid>`. Many strands in `BLOCKED` state on external calls indicate scheduler workers are tied up. See [Strand dump analysis](strand-dump-analysis.md).
+- Capture a JVM thread dump with `jstack <pid>` and look for threads named `ballerina-scheduler-*`. If they sit in `BLOCKED` or `WAITING` inside a blocking call (Java interop, synchronous I/O), the pool is starved.
 
 ## Tune JVM memory
 
-Increase the heap when you hit `OutOfMemoryError`:
+Ballerina runs on the JVM, so JVM memory tuning applies. Reach for this section when:
+
+- `OutOfMemoryError` appears in stderr.
+- The integration runs for a while and then crashes.
+- GC pauses cause latency spikes.
+
+Increase the heap:
 
 ```bash
 export JAVA_OPTS="-Xmx2g -Xms512m"
@@ -119,6 +127,12 @@ export JAVA_OPTS="-Xmx2g -XX:+HeapDumpOnOutOfMemoryError \
   -XX:HeapDumpPath=/tmp/"
 bal run .
 ```
+
+If the issue needs deeper investigation, also collect a JVM thread dump (`jstack <pid>` or `kill -3 <pid>`) and a strand dump (`kill -SIGTRAP <pid>`) at the time of the issue.
+
+:::note
+`JAVA_OPTS` does **not** apply to GraalVM native images — they manage their own memory. To control native-image heap size, set `-R:MaxHeapSize=512m` in `graalvmBuildOptions` or pass it at runtime.
+:::
 
 ## Verify concurrency safety
 
