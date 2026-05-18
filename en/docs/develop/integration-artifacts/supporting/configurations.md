@@ -17,7 +17,7 @@ import TabItem from '@theme/TabItem';
 Because the values live outside the code, the same integration implementation runs unchanged in every environment.
 
 :::note
-WSO2 Integrator's configuration support is built on Ballerina's configurable variable model. For the underlying model, advanced usage, and resolution priority, see [Configuration management](../../design-logic/configuration-management.md).
+WSO2 Integrator's configuration support is built on Ballerina's configurable variable model. For the complete configuration reference, see [Configuration management](../../../reference/config/configuration-management.md).
 :::
 
 ## Adding a configuration
@@ -133,7 +133,7 @@ final http:Client weatherEP = check new ("http://localhost:8080", timeout = time
 </Tabs>
 
 :::tip Learn more
-For the full list of supported types, alternative value sources (environment variables, CLI arguments, inline TOML), and resolution priority, see [Configuration management](../../design-logic/configuration-management.md). To target different environments, set per-environment files as the `BAL_CONFIG_FILES` environment variable. See [Per-environment configuration](../../design-logic/configuration-management.md#per-environment-configuration).
+For the complete configuration reference (supported types, value sources, resolution priority), see [Configuration management](../../../reference/config/configuration-management.md).
 :::
 
 ## Best practices
@@ -147,6 +147,6 @@ For the full list of supported types, alternative value sources (environment var
 
 ## What's next
 
-- [Configuration management](../../design-logic/configuration-management.md) — Deeper reference for configuration sources, priority order, and module-qualified keys.
+- [Configuration management](../../../reference/config/configuration-management.md) — Complete configuration reference: value sources, precedence, and environment variables.
 - [Secrets and encryption](../../../deploy-operate/secure/secrets-encryption.md) — Securely manage credentials and other sensitive values.
 - [Connections](connections.md) — Use configurable variables to parameterize connections.

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-title: "Build a customer care agent with MCP"
+title: "Build a Customer Care Agent with MCP"
 description: Build an AI agent that connects to a live MCP server to answer product and order questions via natural language.
 keywords: [wso2 integrator, mcp, ai agent, mcp toolkit, customer care, tutorial]
 ---
@@ -10,7 +10,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Build a customer care agent with MCP
+# Build a Customer Care Agent with MCP
 
 ## What you'll build
 
@@ -31,7 +31,7 @@ The agent receives customer messages over HTTP, reasons about which tool to call
 
 
 :::info Prerequisites
-- [WSO2 Integrator set up for AI](../getting-started/setting-up-ai.md)
+- [Model Providers for LLMs](../develop/components/model-providers.md)
 - The **ShopEasy MCP server** running locally. Clone the repo and follow its README to start it: [github.com/wso2/integration-samples](https://github.com/wso2/integration-samples/tree/main/integrator-default-profile/samples/customer-care-agent/mcp).
 :::
 
@@ -166,7 +166,7 @@ Try the following messages to exercise all three tools:
     }}
 />
 
-For more detail on using the chat panel, see [Testing chat agents](../../develop/test/built-in-try-it-tool#testing-chat-agents).
+For more detail on using the chat panel, see [Try-It experiences](../../develop/test/built-in-try-it-tool.md#try-it-experiences).
 
 </TabItem>
 <TabItem value="code" label="Ballerina Code">
@@ -250,7 +250,7 @@ To run and test the agent, follow the same steps in the **Visual Designer** tab 
 
 ## What's next
 
-- [Exposing a service as an MCP server](../develop/mcp/exposing-as-mcp) — Build your own MCP server like the one used in this tutorial
-- [Consuming MCP from an agent](../develop/mcp/consuming-mcp-from-agent) — Deeper reference for `ai:McpToolKit` options
-- [Adding memory to an agent](../develop/agents/memory) — Persist conversation history across sessions
-- [AI agent observability](../develop/agents/observability) — Trace tool calls and monitor agent performance
+- [Exposing a service as an MCP server](../develop/mcp/exposing-as-mcp.md) — Build your own MCP server like the one used in this tutorial
+- [Consuming MCP from an agent](../develop/mcp/consuming-mcp-from-agent.md) — Deeper reference for `ai:McpToolKit` options
+- [Adding memory to an agent](../develop/agents/memory.md) — Persist conversation history across sessions
+- [AI agent observability](../develop/agents/observability.md) — Trace tool calls and monitor agent performance

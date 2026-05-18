@@ -1,14 +1,14 @@
 ---
 sidebar_position: 8
-title: GraphQL editor
+title: GraphQL Editor
 description: Design GraphQL services visually, with queries, mutations, subscriptions, and their referenced types on one canvas.
 ---
 
-# GraphQL editor
+# GraphQL Editor
 
 The GraphQL editor, also known as the **GraphQL diagram**, is the editor you open for any GraphQL service in WSO2 Integrator. It renders the service as a node on a canvas, lists every query, mutation, and subscription the service exposes, and draws lines from each operation to the types it returns or accepts. Use it to add or remove operations, edit their signatures, and navigate to the resolver implementation, all from a single view.
 
-For end-to-end usage, including how to create a GraphQL service from scratch or import an existing schema, see [GraphQL Service](/docs/develop/integration-artifacts/service/graphql).
+For end-to-end usage, including how to create a GraphQL service from scratch or import an existing schema, see [GraphQL Service](../../integration-artifacts/service/graphql.md).
 
 ![GraphQL editor showing a GraphQL service with its queries, subscription, and referenced types](/img/develop/understand-ide/editors/graphql-editor/overview.png)
 
@@ -16,7 +16,7 @@ For end-to-end usage, including how to create a GraphQL service from scratch or 
 
 Select a GraphQL service under **Entry points** in the project explorer, or select the service node on the [Integrator view](../views/integration-view.md) design canvas. The editor opens with the service node and the types it references on the canvas.
 
-To create a new GraphQL service before opening the editor, see [GraphQL Service](/docs/develop/integration-artifacts/service/graphql).
+To create a new GraphQL service before opening the editor, see [GraphQL Service](../../integration-artifacts/service/graphql.md).
 
 ## Header
 
@@ -40,7 +40,7 @@ The service node is the card on the canvas that represents the GraphQL service i
 | **Mutation** | Write operations that change server-side state. Rows follow the same name and return-type format. |
 | **Subscription** | Server-push operations that stream values to the client. Rows show the operation name and the type emitted on each event (for example, `S1: MyType`). |
 
-Select an operation row to open the [Flow Diagram editor](flow-diagram-editor.md) for that resolver and edit the logic that runs when the operation is invoked.
+Select an operation row to open the [Flow Diagram editor](flow-diagram-editor/flow-diagram-editor.md) for that resolver and edit the logic that runs when the operation is invoked.
 
 The three-dot menu (**⋮**) on the service node opens the service-level actions:
 
@@ -97,7 +97,7 @@ To pan across the canvas, hold scroll-wheel click or **Space** while dragging, o
 
 ## What's next
 
-- [GraphQL Service](/docs/develop/integration-artifacts/service/graphql): end-to-end guide to creating and configuring a GraphQL service.
-- [Flow Diagram editor](flow-diagram-editor.md): edit the resolver logic for a query, mutation, or subscription.
+- [GraphQL Service](../../integration-artifacts/service/graphql.md): end-to-end guide to creating and configuring a GraphQL service.
+- [Flow Diagram editor](flow-diagram-editor/flow-diagram-editor.md): edit the resolver logic for a query, mutation, or subscription.
 - [Type editor](type-editor.md): define the types the GraphQL schema exposes.
 - [Configure editor](configure-editor.md): change the service's base path, port, or listener.

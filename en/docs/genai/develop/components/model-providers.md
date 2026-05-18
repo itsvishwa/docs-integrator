@@ -11,11 +11,11 @@ A **Large Language Model (LLM)** is a neural network trained on large text corpo
 
 A **Model Provider** is WSO2 Integrator's unified abstraction over LLMs. It wraps the provider-specific API behind a consistent interface, so Direct LLM Calls, Natural Functions, the RAG `generate` node, and AI agents all work the same way regardless of which LLM you choose. Pick a provider, fill in the form, and click **Save**.
 
-Every model provider exposes the same two actions, so picking a different LLM is just a connection-level swap. The rest of your flow does not change.
+Every model provider exposes the same two actions, so switching LLMs is a connection-level swap that leaves the rest of your flow unchanged.
 
 ## Available actions
 
-Every model provider connection exposes these two actions in the right-side **Model Providers** panel.
+Every model provider exposes the following actions.
 
 | Action | What it does | Required parameters | Optional parameters |
 |---|---|---|---|
@@ -28,14 +28,11 @@ Per-call overrides are not exposed in the form. Anything that varies per request
 
 ## Where to find model providers for LLM
 
-Two equivalent places:
-
-- **Add Node** panel > **AI** > **Direct LLM** > **Model Provider** (adds an LLM provider connection to a flow).
-- **Right-side Model Providers** panel > **+ Add Model Provider** (adds a connection from anywhere in the project).
+- **Add Node** panel > **AI** > **Direct LLM** > **Model Provider** 
 
 ![Right-side Model Providers panel showing the search bar and a + Add Model Provider button at the top of an empty list.](/img/genai/develop/components/model-providers/01-panel-empty.png)
 
-Click **+ Add Model Provider** and the **Select Model Provider** picker opens with a card for each provider type:
+- Click **+ Add Model Provider** and the **Select Model Provider** picker opens with a card for each provider type:
 
 ![Select Model Provider picker listing Default Model Provider (WSO2), Anthropic, Azure OpenAI, DeepSeek, Google Vertex, Mistral, Ollama, OpenAI, with one-line descriptions for each.](/img/genai/develop/components/model-providers/02-select-list-top.png)
 
@@ -47,7 +44,7 @@ Scroll to see the remaining options:
 
 | Provider | Module | API key required? | Has embedding provider? |
 |---|---|---|---|
-| **Default WSO2** | `ballerina/ai` | No (signed-in via WSO2) | Yes. See [Default WSO2 Embedding Provider](/docs/genai/develop/components/embedding-providers#default-wso2-embedding-provider) |
+| **Default WSO2** | `ballerina/ai` | No (signed-in via WSO2) | Yes. See [Default WSO2 Embedding Provider](embedding-providers.md#default-wso2-embedding-provider) |
 | **Anthropic** | [`ballerinax/ai.anthropic`](https://central.ballerina.io/ballerinax/ai.anthropic/latest) | Yes | No |
 | **Azure OpenAI** | [`ballerinax/ai.azure`](https://central.ballerina.io/ballerinax/ai.azure/latest) | Yes | Yes |
 | **DeepSeek** | [`ballerinax/ai.deepseek`](https://central.ballerina.io/ballerinax/ai.deepseek/latest) | Yes | No |
@@ -155,7 +152,7 @@ Official website: [Azure OpenAI Service](https://azure.microsoft.com/services/co
 Plus the [Standard HTTP advanced configurations](#standard-http-advanced-configurations).
 
 :::info
-The Azure package also ships an **Embedding Provider** and the **Azure AI Search Knowledge Base**. See [Azure OpenAI](/docs/genai/develop/components/embedding-providers#azure-openai) and [Azure AI Search](/docs/genai/develop/components/knowledge-bases#azure-ai-search-knowledge-base).
+The Azure package also ships an **Embedding Provider** and the **Azure AI Search Knowledge Base**. See [Azure OpenAI](embedding-providers.md#azure-openai) and [Azure AI Search](knowledge-bases.md#azure-ai-search-knowledge-base).
 :::
 
 ## DeepSeek
@@ -207,7 +204,7 @@ Official website: [Vertex AI](https://cloud.google.com/vertex-ai).
 
 | Field | Default | Available values | What it controls |
 |---|---|---|---|
-| **Location** | `"global"` | `"global"`, `"us-central1"`, `"europe-west1"`, etc. | Google Cloud region. |
+| **Location** | `global` | `global`, `us-central1`, `europe-west1`, etc. | Google Cloud region. |
 | **Service URL** | `""` (auto-derived from Location) | URL string | Override the regional endpoint. Defaults to `https://\{location\}-aiplatform.googleapis.com`. |
 | **Maximum Tokens** | `512` | Any positive integer | Hard cap on response length. |
 | **Temperature** | `()` (omitted from request) | `0.0`-`2.0` or empty | Sampling temperature. Leave empty for models that reject the field (e.g. some Anthropic-on-Vertex calls). |
@@ -223,7 +220,7 @@ Plus the [Standard HTTP advanced configurations](#standard-http-advanced-configu
 | **Service account JSON path** | A file path string | Easiest - point at the downloaded service-account JSON file from the Google Cloud console. The connector reads `client_email` and `private_key` automatically and refreshes the token. |
 
 :::info
-Vertex also ships an **Embedding Provider**. See [Google Vertex](/docs/genai/develop/components/embedding-providers#google-vertex).
+Vertex also ships an **Embedding Provider**. See [Google Vertex](embedding-providers.md#google-vertex).
 :::
 
 ## Mistral
@@ -323,7 +320,7 @@ Official website: [platform.openai.com](https://platform.openai.com/).
 Plus the [Standard HTTP advanced configurations](#standard-http-advanced-configurations) (Timeout, Retry, Circuit Breaker, Proxy, etc.).
 
 :::info
-The OpenAI package also ships an **Embedding Provider**. See [OpenAI](/docs/genai/develop/components/embedding-providers#openai).
+The OpenAI package also ships an **Embedding Provider**. See [OpenAI](embedding-providers.md#openai).
 :::
 
 ## OpenRouter
@@ -356,24 +353,24 @@ Official website: [openrouter.ai](https://openrouter.ai/).
 Plus the [Standard HTTP advanced configurations](#standard-http-advanced-configurations).
 
 :::info
-The OpenRouter package also ships an **Embedding Provider**. See [OpenRouter](/docs/genai/develop/components/embedding-providers#openrouter).
+The OpenRouter package also ships an **Embedding Provider**. See [OpenRouter](embedding-providers.md#openrouter).
 :::
 
 ## Model provider connections
 
-Once you click **Save**, the model provider becomes a **connection** in your project and shows up in three places at once:
+Once you **save** a model provider, it becomes a reusable project connection that can be accessed throughout your integration and AI flows.
 
-- The left **Connections** tree, under your project (e.g. `wso2ModelProvider`, `openaiModelprovider`).
-- The **Model Providers** panel on the right side of any flow editor.
-- Wherever a node asks for a model: a `generate` node, a natural function, or the **Model** field of an agent.
+The saved model provider appears in multiple places:
 
-The right-side **Model Providers** panel lists every provider connection in the project, with a **+** button to add another and a chevron to expand each connection's available actions:
+- In the **Connections** tree on the left side of the project explorer, where all project-level connections are listed (for example, `wso2ModelProvider` or `openaiModelProvider`).
 
-![The Model Providers right-side panel listing four model-provider connections - anthropicModelprovider, azureOpenaimodelprovider, openaiModelprovider, wso2ModelProvider - each with a chevron and provider logo.](/img/genai/develop/components/model-providers/21-model-providers-panel-multi.png)
-
-At the project level, every provider also appears in the left **Connections** tree, and the integration project's **Design** view wires each artifact to the provider it depends on:
+- The integration project's **Design** view wires each artifact to the provider it depends on:
 
 ![The integration project Design overview with the left sidebar Connections tree populated with four model-provider connections, and the main canvas wiring three artifacts (chat agent service, HTTP service, MCP service) to their respective model-provider nodes on the right with provider logos.](/img/genai/develop/components/model-providers/22-project-design-multi-providers.png)
+
+- The **Model Providers** panel lists every model provider connection available in the project. Use the **+** button to add a new provider connection, or expand a provider to view its available actions.
+
+![The Model Providers right-side panel listing four model-provider connections - anthropicModelprovider, azureOpenaimodelprovider, openaiModelprovider, wso2ModelProvider - each with a chevron and provider logo.](/img/genai/develop/components/model-providers/21-model-providers-panel-multi.png)
 
 ## Editing or replacing a model provider
 
@@ -394,7 +391,7 @@ Editing a connection follows the same pattern for every component type. Embeddin
 
 ## What's next
 
-- [Embedding providers](/docs/genai/develop/components/embedding-providers) — Vector embeddings for RAG. The OpenAI, Azure, Vertex, OpenRouter, and Default WSO2 packages also ship embedding providers.
-- [Vector stores](/docs/genai/develop/components/vector-stores.md) — Persist and query embeddings using Pinecone, Weaviate, Qdrant, pgvector, and other backends.
-- [Knowledge bases](/docs/genai/develop/components/knowledge-bases.md) — Managed retrieval sources, including Azure AI Search, that plug directly into RAG flows.
-- [Chunkers](/docs/genai/develop/components/chunkers.md) — Split documents into chunks before embedding for ingestion into a vector store.
+- [Embedding providers](embedding-providers.md) — Vector embeddings for RAG. The OpenAI, Azure, Vertex, OpenRouter, and Default WSO2 packages also ship embedding providers.
+- [Vector stores](vector-stores.md) — Persist and query embeddings using Pinecone, Weaviate, Qdrant, pgvector, and other backends.
+- [Knowledge bases](knowledge-bases.md) — Managed retrieval sources, including Azure AI Search, that plug directly into RAG flows.
+- [Chunkers](chunkers.md) — Split documents into chunks before embedding for ingestion into a vector store.

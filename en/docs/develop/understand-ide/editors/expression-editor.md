@@ -1,10 +1,10 @@
 ---
 sidebar_position: 3
-title: Expression editor
+title: Expression Editor
 description: Author Ballerina expressions with assistance, suggestions, and inline validation.
 ---
 
-# Expression editor
+# Expression Editor
 
 The Expression editor is the inline value-input surface used throughout the WSO2 Integrator IDE wherever a field accepts an expression. It provides syntax highlighting, inline validation, and a UI that adapts to the type expected at the cursor, so you can supply values without remembering the full Ballerina syntax for each context.
 
@@ -157,3 +157,9 @@ Appears when you author SQL queries, for example in database connector parameter
 Appears when you author natural-language prompts for AI nodes. The editor is optimized for multi-line text and supports inserting variables as chips so prompt templates remain readable. It also accepts Markdown formatting (headings, bold, italics, lists, links, tables, and quotes) through a built-in toolbar, and you can switch between the rendered **Preview** and the raw **Source** view from the same toolbar.
 
 ![Prompt variation with Markdown toolbar](/img/develop/understand-ide/editors/expression-editor/prompt.png)
+
+## What's next
+
+- [Flow Diagram editor](flow-diagram-editor/flow-diagram-editor.md): author expressions in flow nodes such as conditions, variable declarations, and function calls.
+- [Data Mapper editor](datamapper-editor.md): use expressions to transform and map individual fields.
+- [Type editor](type-editor.md): define the types that determine which expression variation appears for a field.

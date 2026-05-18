@@ -1,10 +1,10 @@
 ---
-title: Flow Diagram editor
+title: Flow Diagram Editor
 description: Visual editor for designing the logic of an integration in WSO2 Integrator.
 keywords: [wso2 integrator, flow diagram editor, visual designer, node panel]
 ---
 
-# Flow Diagram editor
+# Flow Diagram Editor
 
 The Flow Diagram editor is the visual designer for an integration's logic. Each step in the integration is a node on the canvas, and the editor generates valid Ballerina source as you build. Switch to pro-code at any time to read or edit the generated code.
 

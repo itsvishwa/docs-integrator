@@ -1,10 +1,10 @@
 ---
-title: Show more functions
+title: Show More Functions
 description: The Show More Functions action in the WSO2 Integrator Flow Diagram editor for reaching every available function from the node panel.
 keywords: [wso2 integrator, flow diagram editor, show more functions, functions picker]
 ---
 
-# Show more functions
+# Show More Functions
 
 The node panel surfaces only the most common nodes and shortcut functions for each section. **Show More Functions** is the action at the very bottom of the node panel that opens the full functions picker, so you can reach any function the project has access to even if it is not listed as a shortcut.
 
@@ -30,6 +30,6 @@ This is the same picker that opens from the [Call Function](./statement.md#call-
 
 ## What's next
 
-- [Statement](./statement) — The **Call Function** node opens the same picker.
-- [Logging](./logging) — The four logging shortcuts; reach other `log:print*` variants from this picker.
-- [Functions reference](../../../integration-artifacts/supporting/functions) — Create, organize, and reuse functions across artifacts.
+- [Statement](./statement.md) — The **Call Function** node opens the same picker.
+- [Logging](./logging.md) — The four logging shortcuts; reach other `log:print*` variants from this picker.
+- [Functions](../../../integration-artifacts/supporting/functions.md) — Create, organize, and reuse functions across artifacts.
