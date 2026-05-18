@@ -2,7 +2,7 @@
 sidebar_position: 2
 title: Integrator App
 description: The shared shell that surrounds every view in the WSO2 Integrator IDE.
-keywords: [wso2 integrator, ide, integrator app, activity bar, editor toolbar]
+keywords: [wso2 integrator, ide, integrator app, activity bar, editor toolbar, status bar]
 ---
 
 # Integrator App
@@ -105,7 +105,7 @@ The status bar runs across the bottom edge of the IDE and shows the current stat
 | **Branch indicator** (for example, `main*`) | Shows the active Git branch for the project. An asterisk indicates uncommitted changes. Select it to switch or manage branches. |
 | **Problems** (error and warning counts) | Shows the number of errors and warnings detected in the current project. Select it to open the Problems panel. |
 | **Ballerina version** | Shows the Ballerina distribution version that the IDE is using to build and run your integration (for example, `Ballerina 2201.13.4 (Swan Lake Update 13)`). |
-| **ICP** | Shows the status of the [Integration Control Plane](../../deploy/icp/overview.md) connection (for example, `ICP: Stopped`). Select it to start, stop, or configure ICP for the project. |
+| **ICP** | Shows the status of the [Integration Control Plane](../../manage/icp/integration-control-plane.md) connection (for example, `ICP: Stopped`). Select it to start, stop, or configure ICP for the project. |
 | **Notifications** | Opens the notifications panel for messages from the IDE and its extensions. |
 
 ## What's next
