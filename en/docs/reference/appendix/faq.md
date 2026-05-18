@@ -37,7 +37,7 @@ WSO2 Integrator supports a wide range of protocols and data formats through Ball
 
 ### What version of Ballerina does WSO2 Integrator use?
 
-WSO2 Integrator is built on the Ballerina Swan Lake distribution. The exact distribution version is specified in each project's `Ballerina.toml` file under the `[package].distribution` field. See the [Release Notes](/docs/reference/release-notes) for the version shipped with your installer.
+WSO2 Integrator is built on the Ballerina Swan Lake distribution. The exact distribution version is specified in each project's `Ballerina.toml` file under the `[package].distribution` field. See the [Release Notes](./release-notes.md) for the version shipped with your installer.
 
 ### Is WSO2 Integrator open source?
 
@@ -170,4 +170,4 @@ Yes. The two products use different runtimes and can coexist in the same environ
 - [Get Started](/docs/get-started/setup/local-setup) — Install and set up WSO2 Integrator
 - [Build an API Integration](/docs/get-started/build-api-integration) — Build your first integration
 - [Errors and Stack Traces](/docs/develop/troubleshooting/errors-and-stack-traces) — Diagnose and fix common build, runtime, IDE, and deployment issues
-- [Glossary](/docs/reference/glossary) — Definitions of key terms
+- [Glossary](./glossary.md) — Definitions of key terms
