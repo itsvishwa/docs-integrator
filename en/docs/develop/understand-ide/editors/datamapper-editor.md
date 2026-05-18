@@ -37,7 +37,7 @@ The header runs along the top of the editor and combines the breadcrumb, the dat
 
 ## Expression bar
 
-Below the header, the Expression bar shows the field you are currently working with and provides an editor with completion support to write inline expressions when an output field is selected. See [Expression editor](../../integration-artifacts/supporting/data-mapper/mapping-capabilities.md#expression-editor).
+Below the header, the Expression bar shows the field you are currently working with and provides an editor with completion support to write inline expressions when an output field is selected. See [Expression bar](../../integration-artifacts/supporting/data-mapper/mapping-capabilities.md#expression-bar).
 
 ## Inputs side
 
