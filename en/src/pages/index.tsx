@@ -374,7 +374,7 @@ function WhatsNew(): ReactNode {
     <section className={styles.whatsNew}>
       <div className="container">
         <Link
-          to="/reference/release-notes"
+          to="/reference/appendix/release-notes"
           className={styles.whatsNewLink}>
           <span className={styles.whatsNewBadge}>New</span>
           Check out the latest release notes
