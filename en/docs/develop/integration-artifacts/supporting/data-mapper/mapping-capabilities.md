@@ -25,7 +25,7 @@ For outputs that need custom logic, select the output field to focus the express
 
 The `</>` button navigates to the selected output field's position in the source file.
 
-![Expression editor opened on an output field with completion suggestions](/img/develop/integration-artifacts/supporting/data-mapper/expression-editor.gif)
+![Expression bar focused on an output field with completion suggestions](/img/develop/integration-artifacts/supporting/data-mapper/expression-editor.gif)
 
 ## Convert and map
 
