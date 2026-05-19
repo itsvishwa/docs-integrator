@@ -41,7 +41,7 @@ When direct mapping is not possible, choose **Map using Custom Function**. The d
 
 ## Map using transformation function
 
-When you need a focused, visual sub-mapping rather than a free-form function, use **Map using Transformation Function**. The data mapper opens a nested data mapper view scoped to the selected input and output, where you can map fields visually.
+When you need a focused, visual mapping rather than a free-form function, use **Map using Transformation Function**. The data mapper opens a nested data mapper view scoped to the selected input and output, where you can map fields visually.
 
 ![Map using Transformation Function opening a nested data mapper view for the selected fields](/img/develop/integration-artifacts/supporting/data-mapper/map-with-transformation-function.gif)
 
