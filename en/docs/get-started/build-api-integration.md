@@ -18,13 +18,18 @@ An HTTP service exposes your integration logic as a REST endpoint. This quick st
 
 :::info Prerequisites
 
-- [WSO2 Integrator installed](setup/local-setup.md)
+A working WSO2 Integrator environment. Choose the path that fits how you want to work:
+
+- [Cloud setup](setup/cloud-setup.md) — launch WSO2 Integrator in a browser-based cloud editor.
+- [Local setup](setup/local-setup.md) — install and launch the WSO2 Integrator IDE on your machine.
 :::
 
 <Tabs>
 <TabItem value="ui" label="Visual Designer" default>
 
 ## Step 1: Create the integration
+
+*On cloud editor, the project is already created. Skip to Step 2.*
 
 1. Open WSO2 Integrator.
 2. Select the **Create New Integration** card.
