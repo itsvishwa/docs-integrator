@@ -2107,6 +2107,7 @@ const sidebars: SidebarsConfig = {
             'manage/icp/manage-runtimes',
             'manage/icp/reverse-proxy',
             'manage/icp/access-control',
+            'manage/icp/encrypt-secrets',
             {
               type: 'category',
               label: 'User Stores',
