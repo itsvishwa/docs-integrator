@@ -137,13 +137,9 @@ service /wso2IntegratorAssistant on chatAgentListener {
 }
 ```
 
-Run `bal run` from the project directory. Send a test message with:
-
-```bash
-curl -X POST http://localhost:9090/wso2IntegratorAssistant/chat \
-  -H "Content-Type: application/json" \
-  -d '{"sessionId": "session-1", "message": "Hello"}'
-```
+Click the **Run** button in the top toolbar.
+Select **Chat** from the AI Chat Agent title bar or select **Test** from the pop-up. 
+Type `Hello` to check if it works.
 
 </TabItem>
 </Tabs>

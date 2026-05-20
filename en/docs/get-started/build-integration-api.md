@@ -171,7 +171,9 @@ service /hello on httpDefaultListener {
 }
 ```
 
-Save this as `main.bal`, then run `bal run` from the project directory. Send a request with `curl http://localhost:9090/hello/greeting` to verify the `Hello World` response.
+Save this as `main.bal`, then click the **Run** button in the top toolbar.
+Select **Test** in the confirmation dialog, then select **Execute** in the Try-It editor.
+Confirm the response shows `200 OK` with a `Hello World` body.
 
 </TabItem>
 </Tabs>

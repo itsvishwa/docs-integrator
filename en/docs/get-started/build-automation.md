@@ -111,7 +111,7 @@ public function main() returns error? {
 }
 ```
 
-Save this as `automation.bal`, then run `bal run` from the project directory. The terminal output contains `Hello World`.
+Save this as `automation.bal`, then click the **Run** button in the top toolbar. The terminal output contains `Hello World`.
 
 </TabItem>
 </Tabs>

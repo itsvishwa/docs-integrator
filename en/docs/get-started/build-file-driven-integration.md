@@ -169,7 +169,7 @@ service file:Service on fileListener {
 }
 ```
 
-Save this as `main.bal`, then run `bal run` from the project directory. With the test file already in place (see Prerequisites), run the modify command in a separate terminal to trigger the handler:
+Save this as `main.bal`, then click the **Run** button in the top toolbar. With the test file already in place (see Prerequisites), run the modify command in a separate terminal to trigger the handler:
 
 <Tabs groupId="os">
 <TabItem value="unix" label="macOS / Linux" default>

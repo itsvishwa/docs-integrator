@@ -134,7 +134,7 @@ service "Orders" on rabbitmqListener {
 }
 ```
 
-Save this as `main.bal`, then run `bal run` from the project directory. Once running, open `http://localhost:15672` (default credentials: guest/guest), navigate to **Queues → Orders → Publish message**, and publish any message. The terminal log should display `Received order`.
+Save this as `main.bal`, then click the **Run** button in the top toolbar. Once running, open `http://localhost:15672` (default credentials: guest/guest), navigate to **Queues → Orders → Publish message**, and publish any message. The terminal log should display `Received order`.
 
 </TabItem>
 </Tabs>
