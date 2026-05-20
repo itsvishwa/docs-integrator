@@ -1,193 +1,104 @@
 ---
 sidebar_position: 2
-title: Performance Reports
-description: Benchmark results for common WSO2 Integrator scenarios including HTTP passthrough, transformation, and database operations.
-keywords: [wso2 integrator, performance, benchmarks, throughput, latency, graalvm]
+title: Performance Benchmarks
+description: Benchmark results for the WSO2 Integrator HTTP passthrough scenario, including throughput limits, response latency, and resource optimization recommendations.
+keywords: [wso2 integrator, performance, benchmarks, throughput, latency, capacity planning, http passthrough]
 ---
 
-# Performance Reports
+# Performance Benchmarks
 
-This page presents performance benchmark results for common integration scenarios using WSO2 Integrator. Use these reports as a baseline for your own capacity planning.
+This page presents performance benchmark results for WSO2 Integrator deployments on WSO2 Integration Platform PDP. Use these results as a baseline for your capacity planning decisions.
+
+:::note
+Benchmarks currently cover the **HTTP passthrough** scenario. Results for additional integration patterns will be published as testing is completed.
+:::
 
 ## Test environment
 
 | Component | Specification |
 |-----------|--------------|
-| Machine | AWS EC2 c5.xlarge (4 vCPU, 8 GB RAM) |
-| JDK | Eclipse Temurin JDK 17.0.9 |
-| Ballerina | 2201.9.0 (Swan Lake Update 9) |
-| OS | Ubuntu 22.04 LTS |
-| Load Generator | Apache JMeter 5.6.3 running on a separate c5.2xlarge instance |
-| Network | Same VPC, same availability zone |
+| Product | WSO2 Integrator 5.0.0 |
+| Ballerina Version | Ballerina 2201.13.4 (Swan Lake Update 13) |
+| Passthrough service | WSO2 Integration Platform PDP (Azure) |
+| Load generator | AWS EC2 m6a.xlarge (4 vCPU, 16 GiB RAM, up to 12.5 Gbps) |
+| Backend | Netty echo server on AWS EC2 c5.xlarge |
+| Scale-to-zero | Disabled (for consistent baseline measurements) |
+| Endpoint authentication | Enabled |
 
-### JVM configuration
+## Test methodology
 
-```bash
-java -Xms512m -Xmx1024m -XX:+UseG1GC -jar integration.jar
-```
+Tests use a **stress testing** approach: the load generator targets a specific constant throughput (RPS) and the minimum number of replicas required to sustain that throughput is determined.
 
-## Scenario 1: HTTP passthrough
+- **Warmup**: 2 minutes at 10% of target RPS
+- **Test duration**: 10 minutes per configuration (with 30-second ramp-up)
+- **Success criteria**: Error rate < 1% and achieved RPS within ±5% of target
+- **Resource configurations tested per replica**: 0.2 vCPU/512 MB, 0.5 vCPU/1 GB, 1.0 vCPU/1 GB, 2.0 vCPU/1 GB
 
-A simple HTTP proxy that forwards requests to a backend service without transformation.
+**N/A results** indicate that the target throughput cannot be achieved regardless of replica count, due to network latency constraints. When N/A results occur, CPU and memory on the replicas are not saturated — network round-trip time between the client, WSO2 Integration Platform PDP, and the backend is the limiting factor.
 
-```ballerina
-import ballerina/http;
+## HTTP passthrough results
 
-configurable string backendUrl = "http://backend:8080";
-final http:Client backend = check new (backendUrl);
+The HTTP passthrough scenario forwards requests unmodified to a backend service and returns the response to the caller. No transformation or routing logic is applied.
 
-service /api on new http:Listener(9090) {
-    resource function post passthrough(http:Request req) returns http:Response|error {
-        return backend->forward("/", req);
-    }
-}
-```
+### Maximum throughput by payload size
 
-### Results (1 KB payload)
+The table below shows the upper throughput limit for each payload size, assuming adequate concurrent connections are maintained.
 
-| Concurrent Users | Throughput (RPS) | Avg Latency (ms) | p95 Latency (ms) | p99 Latency (ms) | Error Rate |
-|-----------------|-----------------|-------------------|-------------------|-------------------|------------|
-| 50 | 4,200 | 12 | 18 | 25 | 0.00% |
-| 100 | 7,500 | 13 | 22 | 32 | 0.00% |
-| 200 | 10,200 | 20 | 35 | 48 | 0.00% |
-| 500 | 12,800 | 39 | 65 | 95 | 0.01% |
-| 1000 | 13,500 | 74 | 120 | 180 | 0.05% |
+| Payload Size | Maximum Achievable RPS | Minimum Concurrent Connections |
+|:---:|:---:|:---:|
+| 1 KB | 5,000 | 500 |
+| 10 KB | 2,000 | 500 |
+| 50 KB | 2,000 | 500 |
+| 100 KB | 500 | ≥100 |
+| 250 KB | 200 | ≥50 |
+| 1 MB | 100 | ≥50 |
 
-### Results (10 KB payload)
+### Response latency
 
-| Concurrent Users | Throughput (RPS) | Avg Latency (ms) | p95 Latency (ms) | p99 Latency (ms) | Error Rate |
-|-----------------|-----------------|-------------------|-------------------|-------------------|------------|
-| 50 | 3,800 | 13 | 20 | 28 | 0.00% |
-| 100 | 6,500 | 15 | 25 | 38 | 0.00% |
-| 200 | 8,800 | 23 | 40 | 55 | 0.00% |
-| 500 | 10,500 | 48 | 80 | 115 | 0.02% |
+The following table shows typical response times under normal operating conditions (1.0 vCPU, 1 GB memory, no CPU/memory saturation). Use these values to set latency expectations and configure client timeouts.
 
-## Scenario 2: Content-based routing
+| Payload Size | Avg Response Time | 99th Percentile |
+|:---|:---|:---|
+| 1 KB | 74–84 ms | 80–160 ms |
+| 10 KB | 73–116 ms | 83–192 ms |
+| 50 KB | 88–228 ms | 216–340 ms |
+| 100 KB | 95–295 ms | 280–429 ms |
+| 250 KB | 100–374 ms | 340–572 ms |
+| 1 MB | 265–702 ms | 602–966 ms |
 
-Route requests to different backends based on payload content.
+> Ranges reflect measurements across 10 to 500 concurrent connections. Higher concurrency slightly increases average response time.
 
-```ballerina
-import ballerina/http;
+### Resource optimization recommendations
 
-final http:Client premiumBackend = check new ("http://premium-backend:8080");
-final http:Client standardBackend = check new ("http://standard-backend:8080");
+The table below maps throughput targets and payload sizes to the recommended resource configuration and minimum concurrent connections required.
 
-service /api on new http:Listener(9090) {
-    resource function post route(json payload) returns json|error {
-        string tier = check payload.customerTier;
-        if tier == "premium" {
-            return premiumBackend->post("/process", payload);
-        }
-        return standardBackend->post("/process", payload);
-    }
-}
-```
+| Throughput Target | Payload Size | Recommended CPU | Recommended Memory | Expected Replicas | Min Concurrent Connections |
+|---:|---:|---:|---:|---:|---:|
+| ≤50 RPS | ≤250 KB | 0.2 vCPU | 512 MB | 1 | 50 |
+| ≤100 RPS | ≤100 KB | 0.2 vCPU | 512 MB | 1 | 10 |
+| ≤100 RPS | 250 KB | 0.5 vCPU | 1 GB | 1 | 50 |
+| ≤100 RPS | 1 MB | 1.0 vCPU | 1 GB | 1 | 50 |
+| 101–200 RPS | ≤100 KB | 0.5 vCPU | 1 GB | 1 | 50 |
+| 101–200 RPS | 250 KB | 0.5 vCPU | 1 GB | 1 | 50 |
+| 201–500 RPS | ≤10 KB | 0.5 vCPU | 1 GB | 1 | 50 |
+| 201–500 RPS | 50 KB | 1.0 vCPU | 1 GB | 1 | 50 |
+| 501–1000 RPS | ≤10 KB | 0.5 vCPU | 1 GB | 1 | 100–200 |
+| 501–1000 RPS | 50 KB | 1.0 vCPU | 1 GB | 1 | 500 |
+| 1001–2000 RPS | 1 KB | 0.5 vCPU | 1 GB | 1 | 200 |
+| 1001–2000 RPS | 10–50 KB | 0.5 vCPU | 1 GB | 1 | 500 |
+| 2001–5000 RPS | 1 KB | 0.5 vCPU | 1 GB | 1 | 500 |
 
-### Results (1 KB payload)
+## Known limitations
 
-| Concurrent Users | Throughput (RPS) | Avg Latency (ms) | p95 Latency (ms) | p99 Latency (ms) | Error Rate |
-|-----------------|-----------------|-------------------|-------------------|-------------------|------------|
-| 50 | 3,900 | 13 | 20 | 28 | 0.00% |
-| 100 | 6,800 | 15 | 24 | 35 | 0.00% |
-| 200 | 9,200 | 22 | 38 | 52 | 0.00% |
-| 500 | 11,500 | 43 | 72 | 105 | 0.01% |
-
-## Scenario 3: Scatter-Gather (3 backends)
-
-Call three backend services in parallel and aggregate the results.
-
-```ballerina
-import ballerina/http;
-
-final http:Client inventoryClient = check new ("http://inventory:8080");
-final http:Client pricingClient = check new ("http://pricing:8080");
-final http:Client reviewsClient = check new ("http://reviews:8080");
-
-service /api on new http:Listener(9090) {
-    resource function get product/[string id]() returns json|error {
-        fork {
-            worker inventory returns json|error {
-                return inventoryClient->get("/stock/" + id);
-            }
-            worker pricing returns json|error {
-                return pricingClient->get("/price/" + id);
-            }
-            worker reviews returns json|error {
-                return reviewsClient->get("/reviews/" + id);
-            }
-        }
-        record {json|error inventory; json|error pricing; json|error reviews;} results = wait {inventory, pricing, reviews};
-
-        return {
-            stock: check results.inventory,
-            price: check results.pricing,
-            reviews: check results.reviews
-        };
-    }
-}
-```
-
-### Results
-
-| Concurrent Users | Throughput (RPS) | Avg Latency (ms) | p95 Latency (ms) | p99 Latency (ms) | Error Rate |
-|-----------------|-----------------|-------------------|-------------------|-------------------|------------|
-| 50 | 2,800 | 18 | 28 | 40 | 0.00% |
-| 100 | 4,500 | 22 | 35 | 50 | 0.00% |
-| 200 | 6,200 | 32 | 55 | 78 | 0.01% |
-| 500 | 7,800 | 64 | 105 | 150 | 0.03% |
-
-## Scenario 4: JSON-to-JSON transformation
-
-Transform a JSON payload with data mapping.
-
-### Results (5 KB payload, 20 fields mapped)
-
-| Concurrent Users | Throughput (RPS) | Avg Latency (ms) | p95 Latency (ms) | p99 Latency (ms) | Error Rate |
-|-----------------|-----------------|-------------------|-------------------|-------------------|------------|
-| 50 | 5,500 | 9 | 14 | 20 | 0.00% |
-| 100 | 9,200 | 11 | 17 | 24 | 0.00% |
-| 200 | 12,500 | 16 | 28 | 40 | 0.00% |
-| 500 | 14,800 | 34 | 58 | 85 | 0.01% |
-
-## Scenario 5: Database CRUD
-
-HTTP service with PostgreSQL database reads and writes.
-
-### Results (Single row read)
-
-| Concurrent Users | Throughput (RPS) | Avg Latency (ms) | p95 Latency (ms) | p99 Latency (ms) | Error Rate |
-|-----------------|-----------------|-------------------|-------------------|-------------------|------------|
-| 50 | 3,200 | 16 | 25 | 35 | 0.00% |
-| 100 | 5,400 | 18 | 30 | 42 | 0.00% |
-| 200 | 7,000 | 28 | 48 | 68 | 0.00% |
-| 500 | 8,200 | 61 | 100 | 145 | 0.02% |
-
-## GraalVM native image comparison
-
-Comparing JVM vs. GraalVM native image for the HTTP Passthrough scenario (100 concurrent users):
-
-| Metric | JVM | GraalVM Native |
-|--------|-----|----------------|
-| Startup Time | 2.1s | 0.045s |
-| Memory (RSS) | 280 MB | 65 MB |
-| Throughput (RPS) | 7,500 | 6,800 |
-| p95 Latency | 22 ms | 25 ms |
-| p99 Latency | 32 ms | 38 ms |
-
-GraalVM native images trade a small amount of peak throughput for dramatically lower startup time and memory usage.
-
-## Methodology
-
-All benchmarks follow this methodology:
-
-1. **Warmup**: 60-second warmup period before measurement.
-2. **Duration**: 5-minute sustained load per data point.
-3. **Backend simulation**: Backend services respond in 5ms with a static JSON payload.
-4. **Measurement**: Metrics collected from JMeter and JVM (via JMX).
-5. **Repetition**: Each test repeated 3 times; median values reported.
+| Scenario | Details |
+|:---|:---|
+| 1 MB payloads | Maximum achievable throughput is 100 RPS; not achievable at 200 RPS+ |
+| 250 KB payloads | Maximum achievable throughput is 200 RPS |
+| High throughput (≥1000 RPS) | Only small payloads (≤50 KB) with high concurrency (≥100–500 connections) |
+| Low concurrency (<50 connections) | Cannot achieve throughput above 100–200 RPS regardless of resources |
+| Network latency as bottleneck | When N/A results occur, CPU and memory are not saturated — network round-trip latency is the limiting factor |
 
 ## What's next
 
-- [Overview and sizing guidelines](overview.md) — Use these results for sizing your deployments
+- [Overview and sizing guidelines](overview.md) — Use these results to size your deployments
 - [Scaling and high availability](../deploy/scaling-high-availability.md) — Scale based on throughput requirements
-- [GraalVM native images](../deploy/graalvm-native-images.md) — Build native images for lower resource usage
