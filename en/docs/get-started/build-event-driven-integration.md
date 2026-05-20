@@ -30,7 +30,7 @@ Event integrations are designed for reactive workflows triggered by messages fro
 
 :::info Note
 
-When using the cloud editor, the project is already created. Skip to Step 2.
+In the cloud editor, you're already inside a project. Skip to Step 2.
 :::
 
 1. Open WSO2 Integrator.

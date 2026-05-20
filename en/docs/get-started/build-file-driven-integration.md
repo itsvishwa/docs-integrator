@@ -50,7 +50,7 @@ File integrations are ideal for batch uploads, scheduled file processing, and ET
 
 :::info Note
 
-When using the cloud editor, the project is already created. Skip to Step 2.
+In the cloud editor, you're already inside a project. Skip to Step 2.
 :::
 
 1. Open WSO2 Integrator.
