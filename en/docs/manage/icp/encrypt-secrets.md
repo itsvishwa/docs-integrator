@@ -59,7 +59,7 @@ bin\ciphertool.bat
 
 The tool loads the keystore, prompts for the keystore password and the plaintext value, then prints the encrypted ciphertext:
 
-```
+```bash
 Encrypting using Primary KeyStore.
 {type: PKCS12, alias: localhost, path: conf/security/keystore.p12}
 
@@ -90,7 +90,7 @@ The alias can be any descriptive name, but using the configuration key name as t
 **Fields from the [Encryptable configuration fields](#encryptable-configuration-fields) table above go into their respective secrets tables:**
 
 ```toml
-# Ciphertext refereneces for server configurables
+# Ciphertext references for server configurables
 # References scattered throughout the main configuration
 keystorePassword   = "$secret{keystorePassword}"
 ssoClientSecret    = "$secret{ssoClientSecret}"
