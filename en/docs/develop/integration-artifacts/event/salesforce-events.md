@@ -89,22 +89,35 @@ service salesforce:CdcService on salesforceListener {
 
 In the **Service Designer**, click the **Configure** icon in the header to open the **Salesforce Event Integration Configuration** panel. Select **salesforceListener** under **Attached Listeners** to configure the listener.
 
+The listener supports two authentication modes: **SOAP-based** (username and password) and **REST-based** (OAuth 2.0). The same fields apply whether you configure the listener through the visual designer or directly in Ballerina code.
+
+### SOAP-based authentication
+
+`salesforce:SoapBasedListenerConfig` fields:
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `auth` | `CredentialsConfig` | Required | Authentication credentials. Contains `username` (Salesforce username / email) and `password`. The `password` value must be the user password concatenated with the user's security token (`<password><securityToken>`, no separator). |
+| `isSandBox` | `boolean` | `false` | Set to `true` if connecting to a Salesforce sandbox environment. |
+| `replayFrom` | `int` \| `ReplayOptions` | `REPLAY_FROM_TIP` | Replay option: `REPLAY_FROM_TIP`, `REPLAY_FROM_EARLIEST`, or a specific replay ID. |
+| `connectionTimeout` | `decimal` | `30` | Connection timeout in seconds. |
+| `readTimeout` | `decimal` | `30` | Read timeout in seconds. |
+| `keepAliveInterval` | `decimal` | `120` | Keep-alive interval in seconds. |
+| `apiVersion` | `string` | `"43.0"` | Salesforce Streaming API version. |
+| `sessionTimeout` | `int` | `900` | Session timeout in seconds. |
+| `proxyConfig` | `ProxyConfig` | `()` | Optional HTTP proxy configuration. |
+
+:::note
+Salesforce treats the SOAP login `password` field as `<password><securityToken>` with no separator. Reset or copy the security token from **Setup → My Personal Information → Reset My Security Token** in Salesforce.
+:::
+
 <Tabs>
 <TabItem value="ui" label="Visual Designer" default>
 
-| Field | Description | Default |
-|---|---|---|
-| **Name** | Identifier for the listener. | `salesforceListener` |
-| **Auth** | Authentication credentials. SOAP-based authentication accepts a record expression with `username` and `password` fields. REST-based authentication is also supported. Select one of **Bearer Token**, **Password Grant**, **Refresh Token**, or **Client Credentials**. | Required |
-
-Click **Save Changes** to apply updates.
+In the **Configure** panel, set **Auth** to a record expression with `username` and `password` fields, then expand **Optional fields** to set any of the values above. Click **Save Changes** to apply.
 
 </TabItem>
 <TabItem value="code" label="Ballerina Code">
-
-The listener supports two authentication modes.
-
-**SOAP-based authentication** (username and password):
 
 ```ballerina
 listener salesforce:Listener salesforceListener = new ({
@@ -115,14 +128,47 @@ listener salesforce:Listener salesforceListener = new ({
 });
 ```
 
-`salesforce:SoapBasedListenerConfig` fields:
+</TabItem>
+</Tabs>
+
+### REST-based authentication
+
+`salesforce:RestBasedListenerConfig` fields:
 
 | Field | Type | Default | Description |
 |---|---|---|---|
-| `auth` | `CredentialsConfig` | Required | Authentication credentials. Contains `username` (Salesforce username / email) and `password` (password concatenated with the security token). |
-| `isSandBox` | `boolean` | `false` | Set to `true` if connecting to a Salesforce sandbox environment. |
+| `baseUrl` | `string` | Required | Salesforce instance URL |
+| `auth` | `OAuth2Config` | Required | OAuth 2.0 configuration. Pick one of `BearerTokenConfig`, `OAuth2PasswordGrantConfig`, `OAuth2RefreshTokenGrantConfig`, or `OAuth2ClientCredentialsGrantConfig` — see [OAuth 2.0 auth variants](#oauth-20-auth-variants) below. |
+| `tokenStore` | `TokenStore` | `InMemoryTokenStore` | Token store for coordinating refresh token rotation across replicas. Use a distributed implementation (e.g., Redis-backed) for multi-replica deployments. |
 
-**REST-based authentication** (OAuth 2.0 refresh token):
+⚠️ `tokenStore` and Refresh Token Rotation (RTR) only apply when using `OAuth2RefreshTokenGrantConfig`. The other grant types bypass the `TokenManager` entirely.
+
+#### OAuth 2.0 auth variants
+
+The Record Configuration panel's `auth` drop-down (and the corresponding Ballerina record types) exposes four grant configurations. Pick the one that matches how your Connected App is set up.
+
+| Config type | Required fields | Use when |
+|---|---|---|
+| `BearerTokenConfig` | `token` | You already have a short-lived access token and refresh it out-of-band. |
+| `OAuth2PasswordGrantConfig` | `tokenUrl`, `username`, `password` | You authenticate as a Salesforce user with username + password (the `password` value must be `<password><securityToken>`, as for SOAP). |
+| `OAuth2RefreshTokenGrantConfig` | `refreshUrl`, `refreshToken`, `clientId`, `clientSecret` | You have a long-lived refresh token from a Connected App authorization-code flow. Recommended for production. |
+| `OAuth2ClientCredentialsGrantConfig` | `tokenUrl`, `clientId`, `clientSecret` | The Connected App authenticates as itself (machine-to-machine), without a user context. |
+
+All three grant configs additionally accept these optional fields: `scopes`, `defaultTokenExpTime`, `clockSkew`, `optionalParams`, `credentialBearer`, `clientConfig`. `OAuth2PasswordGrantConfig` also accepts `clientId`, `clientSecret`, and `refreshConfig` as optional.
+
+:::note
+These are the standard `ballerina/http` OAuth 2.0 grant types. For the full optional-field reference, see the [`ballerina/http` package documentation](https://central.ballerina.io/ballerina/http/latest).
+:::
+
+<Tabs>
+<TabItem value="ui" label="Visual Designer" default>
+
+In the **Configure** panel, select the grant type from the **Auth** drop-down, then fill in its required fields and any optional ones. Click **Save Changes** to apply.
+
+</TabItem>
+<TabItem value="code" label="Ballerina Code">
+
+Example using `OAuth2RefreshTokenGrantConfig`:
 
 ```ballerina
 listener salesforce:Listener salesforceListener = new ({
@@ -135,16 +181,6 @@ listener salesforce:Listener salesforceListener = new ({
     }
 });
 ```
-
-`salesforce:RestBasedListenerConfig` fields:
-
-| Field | Type | Default | Description |
-|---|---|---|---|
-| `baseUrl` | `string` | Required | Salesforce instance URL |
-| `auth` | `OAuth2Config` | Required | OAuth 2.0 configuration. Accepts `OAuth2RefreshTokenGrantConfig`, `OAuth2PasswordGrantConfig`, `OAuth2ClientCredentialsGrantConfig`, or `BearerTokenConfig`. |
-| `tokenStore` | `TokenStore` | `InMemoryTokenStore` | Token store for coordinating refresh token rotation across replicas. Use a distributed implementation (e.g., Redis-backed) for multi-replica deployments. |
-
-⚠️ `tokenStore` and Refresh Token Rotation (RTR) only apply when using `OAuth2RefreshTokenGrantConfig`. The other grant types bypass the `TokenManager` entirely.
 
 </TabItem>
 </Tabs>
