@@ -87,6 +87,28 @@ service salesforce:CdcService on salesforceListener {
 
 ## Listener configuration
 
+<Tabs>
+<TabItem value="ui" label="Visual Designer" default>
+
+In the **Configure** panel, set **Auth** to a record expression with `username` and `password` fields, then expand **Optional fields** to set any of the values above. Click **Save Changes** to apply.
+
+   ![Salesforce Configiration](/img/develop/integration-artifacts/event/salesforce-events/salesforce-configuration.png)
+
+</TabItem>
+<TabItem value="code" label="Ballerina Code">
+
+```ballerina
+listener salesforce:Listener salesforceListener = new ({
+    auth: {
+        username: username,
+        password: password,    // password concatenated with security token
+    }
+});
+```
+
+</TabItem>
+</Tabs>
+
 In the **Service Designer**, click the **Configure** icon in the header to open the **Salesforce Event Integration Configuration** panel. Select **salesforceListener** under **Attached Listeners** to configure the listener.
 
 The listener supports two authentication modes: **SOAP-based** (username and password) and **REST-based** (OAuth 2.0). The same fields apply whether you configure the listener through the visual designer or directly in Ballerina code.
@@ -111,25 +133,6 @@ The listener supports two authentication modes: **SOAP-based** (username and pas
 Salesforce treats the SOAP login `password` field as `<password><securityToken>` with no separator. Reset or copy the security token from **Setup → My Personal Information → Reset My Security Token** in Salesforce.
 :::
 
-<Tabs>
-<TabItem value="ui" label="Visual Designer" default>
-
-In the **Configure** panel, set **Auth** to a record expression with `username` and `password` fields, then expand **Optional fields** to set any of the values above. Click **Save Changes** to apply.
-
-</TabItem>
-<TabItem value="code" label="Ballerina Code">
-
-```ballerina
-listener salesforce:Listener salesforceListener = new ({
-    auth: {
-        username: username,
-        password: password,    // password concatenated with security token
-    }
-});
-```
-
-</TabItem>
-</Tabs>
 
 ### REST-based authentication
 
@@ -141,7 +144,7 @@ listener salesforce:Listener salesforceListener = new ({
 | `auth` | `OAuth2Config` | Required | OAuth 2.0 configuration. Pick one of `BearerTokenConfig`, `OAuth2PasswordGrantConfig`, `OAuth2RefreshTokenGrantConfig`, or `OAuth2ClientCredentialsGrantConfig` — see [OAuth 2.0 auth variants](#oauth-20-auth-variants) below. |
 | `tokenStore` | `TokenStore` | `InMemoryTokenStore` | Token store for coordinating refresh token rotation across replicas. Use a distributed implementation (e.g., Redis-backed) for multi-replica deployments. |
 
-⚠️ `tokenStore` and Refresh Token Rotation (RTR) only apply when using `OAuth2RefreshTokenGrantConfig`. The other grant types bypass the `TokenManager` entirely.
+`tokenStore` and Refresh Token Rotation (RTR) only apply when using `OAuth2RefreshTokenGrantConfig`. The other grant types bypass the `TokenManager` entirely.
 
 #### OAuth 2.0 auth variants
 
