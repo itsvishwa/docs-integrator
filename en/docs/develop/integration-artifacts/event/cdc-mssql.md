@@ -1,6 +1,6 @@
 ---
 title: CDC for Microsoft SQL Server
-description: Capture real-time data changes from Microsoft SQL Server tables using Change Data Capture, with handlers for insert, update, delete, read, and error events.
+description: Capture real-time data changes from Microsoft SQL Server tables using Change Data Capture, with handlers for insert, update, delete and read events.
 keywords: [wso2 integrator, cdc, microsoft sql server, mssql, change data capture, event integration, debezium]
 ---
 
@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # CDC for Microsoft SQL Server
 
-Microsoft SQL Server CDC integrations capture row-level changes from SQL Server tables in real time using Debezium-based Change Data Capture. Use them for data synchronization, audit logging, and event-driven workflows that must react to database inserts, updates, and deletes without polling. This page covers creating the integration, configuring the service and listener, and adding event handlers for insert, update, delete, read, and error events.
+Microsoft SQL Server CDC integrations capture row-level changes from SQL Server tables in real time using Debezium-based Change Data Capture. Use them for data synchronization, audit logging, and event-driven workflows that must react to database inserts, updates, and deletes without polling. This page covers creating the integration, configuring the service and listener, and adding event handlers for insert, update, delete and read events.
 
 :::info Prerequisites
 
@@ -81,27 +81,39 @@ listener mssql:CdcListener mssqlCdcListener = new (database = {
     includedSchemas: ["dbo"]
 });
 
+// Typed record that mirrors the columns of the tracked table.
+// Declare a matching record so handlers receive a typed value and can
+// access fields directly (for example, `after.id`) instead of working
+// with an untyped `record {}`.
+type Customer record {|
+    int id;
+    string name;
+    string email;
+|};
+
 // Scopes the service to a specific fully qualified table.
 @cdc:ServiceConfig {
     tables: dbTable
 }
 service cdc:Service on mssqlCdcListener {
 
-    // Fires when a new row is inserted into the tracked table.
-    remote function onCreate(record {} after) returns error? {
-        log:printInfo("Row inserted", data = after.toString());
+    // Fires when a new row is inserted. The inserted row is bound to `after` as a `Customer`.
+    remote function onCreate(Customer after) returns error? {
+        log:printInfo("Row inserted", id = after.id, name = after.name);
     }
 
-    // Fires when a row is updated; `before` is the previous state, `after` is the new state.
-    remote function onUpdate(record {} before, record {} after) returns error? {
+    // Fires when a row is updated. Both states are bound to `Customer` records,
+    // so you can compare fields directly (for example, `before.email != after.email`).
+    remote function onUpdate(Customer before, Customer after) returns error? {
         log:printInfo("Row updated",
-                before = before.toString(),
-                after = after.toString());
+                id = after.id,
+                oldEmail = before.email,
+                newEmail = after.email);
     }
 
-    // Fires when a row is deleted; `before` holds the row data at the time of deletion.
-    remote function onDelete(record {} before) returns error? {
-        log:printInfo("Row deleted", data = before.toString());
+    // Fires when a row is deleted. The deleted row is bound to `before`.
+    remote function onDelete(Customer before) returns error? {
+        log:printInfo("Row deleted", id = before.id);
     }
 
     // Fires when the listener encounters a processing error.
@@ -110,6 +122,8 @@ service cdc:Service on mssqlCdcListener {
     }
 }
 ```
+
+To accept any row shape without defining a record type, declare handler parameters as `record {}`. With a typed record like `Customer`, the runtime binds the change-event payload to your record fields automatically.
 
 </TabItem>
 </Tabs>
