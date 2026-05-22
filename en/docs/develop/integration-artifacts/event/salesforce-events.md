@@ -136,7 +136,7 @@ The listener supports two authentication modes: **SOAP-based** (username and pas
 
 ### Common optional fields
 
-These fields apply to both SOAP- and REST-based listener configurations:
+These fields apply to both SOAP and REST-based listener configurations:
 
 | Field | Type | Description |
 |---|---|---|
