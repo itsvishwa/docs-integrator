@@ -36,50 +36,7 @@ Verify the installation:
 bal edi --help
 ```
 
-## Generating types from an EDIFACT spec
-
-For standard EDI formats like EDIFACT, you don't need to write a schema by hand. The `bal edi` tool has built-in knowledge of EDIFACT message types. Run the following command to generate a JSON schema for the EDIFACT ORDERS message (version D03A):
-
-```bash
-bal edi convertEdifactSchema -v d03a -t ORDERS -o schema
-```
-
-This writes a ready-to-use JSON schema to `schema/ORDERS.json`. Then generate Ballerina record types and parser/serializer functions from it. Let's add the generated code into a separate library.
-
-<Tabs>
-<TabItem value="ui" label="Visual Designer" default>
-
-1. After creating a new integration, click the **+ Add** icon.
-2. Select **Library** as the type, enter `orders` as the library name, and click **Add Library**.
-
-   ![Add New Library](/img/develop/transform/edi/add-new-library.png)
-
-3. Open the terminal and navigate to the `orders` directory.
-
-   ```bash
-   cd orders
-   ```
-
-4. Execute the following command to generate the necessary records and functions for the ORDERS schema.
-
-   ```bash
-   bal edi codegen -i ../schema/ORDERS.json -o orders.bal
-   ```
-
-</TabItem>
-</Tabs>
-
-The generated file contains:
-
-- **Record types**: one per segment in the ORDERS message (BGM, DTM, NAD, LIN, and so on).
-- **`fromEdiString`**: converts an EDI string to a typed Ballerina record.
-- **`toEdiString`**: converts a Ballerina record to an EDI string.
-- **`getSchema`**: returns the EDI schema as an `EdiSchema` object.
-- **`fromEdiStringWithSchema`** / **`toEdiStringWithSchema`**: variants that accept a pre-loaded `EdiSchema`, useful when the same code must handle multiple schemas selected at runtime.
-
-The same generated artifacts are produced whether the source standard is EDIFACT, X12, ESL, or a custom schema. Once you have a generated module, the rest of this page applies unchanged.
-
-## Generating types from an X12 transaction set
+## Generating code from an X12 transaction set
 
 X12 is the ANSI ASC X12 EDI standard widely used in North America for purchase orders, invoices, advance ship notices, and many other transaction sets. The `bal edi convertX12Schema` command converts an X12 schema file into the Ballerina EDI JSON schema format.
 
@@ -95,13 +52,13 @@ The command supports three optional flags for tuning how the schema is interpret
 
 See the [EDI tool](../tools/integration-tools/edi-tool.md#bal-edi-convertx12schema) page for full flag details.
 
-Once the schema is converted, run `codegen` exactly as in the EDIFACT walkthrough to produce typed records and parser functions:
+Once the schema is converted, run `codegen` to produce typed records and parser functions:
 
 ```bash
 bal edi codegen -i schema/schema.json -o x12.bal
 ```
 
-## Generating types from an ESL schema
+## Generating code from an ESL schema
 
 ESL (Electronic Shelf Labeling) schemas describe retail pricing and product information formats. They reference a base definitions file that lists the shared segment definitions; both inputs are required when converting.
 
@@ -109,11 +66,11 @@ ESL (Electronic Shelf Labeling) schemas describe retail pricing and product info
 bal edi convertESL -b path/to/base-definitions -i path/to/esl-schema -o schema
 ```
 
-After conversion, run `codegen` the same way as for EDIFACT or X12 to generate the records and functions.
+After conversion, run `codegen` the same way as for X12 to generate the records and functions.
 
-## Generating types from a custom EDI schema
+## Generating code from a custom EDI schema
 
-If you work with a non-standard or proprietary EDI format, you can define your own schema as a JSON file and generate Ballerina types from it. This is the same format that `convertEdifactSchema`, `convertX12Schema`, and `convertESL` all produce internally; skipping conversion lets you describe the format directly.
+If you work with a non-standard or proprietary EDI format, you can define your own schema as a JSON file and generate Ballerina code from it. This is the same format that `convertEdifactSchema`, `convertX12Schema`, and `convertESL` all produce internally; skipping conversion lets you describe the format directly.
 
 Define your schema:
 
@@ -161,23 +118,50 @@ Then generate Ballerina code from it:
 bal edi codegen -i schema.json -o document.bal
 ```
 
-## Building a reusable library package
+## Generating code from an EDIFACT spec
 
-A real integration usually needs to handle several EDI schemas at once: a purchase order, an invoice, a shipping notice, and often multiple versions of each. Running `codegen` per schema and tracking the outputs by hand becomes tedious. The `bal edi libgen` command bundles a directory of schemas into a complete Ballerina package.
+For standard EDI formats like EDIFACT, you don't need to write a schema by hand. The `bal edi` tool has built-in knowledge of EDIFACT message types. Run the following command to generate a JSON schema for the EDIFACT ORDERS message (version D03A):
 
 ```bash
-bal edi libgen -p <org-name>/<package-name> -i path/to/schemas/ -o path/to/output/
+bal edi convertEdifactSchema -v d03a -t ORDERS -o schema
 ```
 
-The generated package contains:
+This writes a ready-to-use JSON schema to `schema/ORDERS.json`. Then generate Ballerina record types and parser/serializer functions from it. Let's add the generated code into a separate library.
 
-- **One Ballerina module per schema**: each with its own record types and `fromEdiString` / `toEdiString` functions, named after the source schema file.
-- **Utility methods**: shared helpers for working with the EDI schemas in the package.
-- **A REST connector**: a generated service that exposes EDI-to-JSON and JSON-to-EDI conversion endpoints for every schema in the package. Downstream services can call these endpoints over HTTP without taking a Ballerina dependency.
+<Tabs>
+<TabItem value="ui" label="Visual Designer" default>
 
-Publish the generated package to [Ballerina Central](https://central.ballerina.io/) and import it into any integration the same way you import any other Ballerina library. Alternatively, build and run it directly with `bal build` and `bal run` to deploy it as a standalone EDI conversion microservice.
+1. After creating a new integration, click the **+ Add** icon.
+2. Select **Library** as the type, enter `orders` as the library name, and click **Add Library**.
 
-For the `libgen` flag reference, see the [EDI tool](../tools/integration-tools/edi-tool.md#bal-edi-libgen) page.
+   ![Add New Library](/img/develop/transform/edi/add-new-library.png)
+
+3. Open the terminal and navigate to the `orders` directory.
+
+   ```bash
+   cd orders
+   ```
+
+4. Execute the following command to generate the necessary records and functions for the ORDERS schema.
+
+   ```bash
+   bal edi codegen -i ../schema/ORDERS.json -o orders.bal
+   ```
+
+</TabItem>
+</Tabs>
+
+The generated file contains:
+
+- **Record types**: one per segment in the ORDERS message (BGM, DTM, NAD, LIN, and so on).
+- **`fromEdiString`**: converts an EDI string to a typed Ballerina record.
+- **`toEdiString`**: converts a Ballerina record to an EDI string.
+- **`getSchema`**: returns the EDI schema as an `EdiSchema` object.
+- **`fromEdiStringWithSchema`** / **`toEdiStringWithSchema`**: variants that accept a pre-loaded `EdiSchema`, useful when the same code must handle multiple schemas selected at runtime.
+
+The same generated artifacts are produced whether the source standard is EDIFACT, X12, ESL, or a custom schema. Once you have a generated module, the rest of this page applies unchanged.
+
+If you need to handle several EDI schemas at once, you can bundle them into a single reusable package instead of generating each module by hand. See [Building a reusable library package](#building-a-reusable-library-package).
 
 ## Parsing EDI documents
 
@@ -389,6 +373,24 @@ public function main() returns error? {
 
 </TabItem>
 </Tabs>
+
+## Building a reusable library package
+
+A real integration usually needs to handle several EDI schemas at once: a purchase order, an invoice, a shipping notice, and often multiple versions of each. Running `codegen` per schema and tracking the outputs by hand becomes tedious. The `bal edi libgen` command bundles a directory of schemas into a complete Ballerina package.
+
+```bash
+bal edi libgen -p <org-name>/<package-name> -i path/to/schemas/ -o path/to/output/
+```
+
+The generated package contains:
+
+- **One Ballerina module per schema**: each with its own record types and `fromEdiString` / `toEdiString` functions, named after the source schema file.
+- **Utility methods**: shared helpers for working with the EDI schemas in the package.
+- **A REST connector**: a generated service that exposes EDI-to-JSON and JSON-to-EDI conversion endpoints for every schema in the package. Downstream services can call these endpoints over HTTP without taking a Ballerina dependency.
+
+Publish the generated package to [Ballerina Central](https://central.ballerina.io/) and import it into any integration the same way you import any other Ballerina library. Alternatively, build and run it directly with `bal build` and `bal run` to deploy it as a standalone EDI conversion microservice.
+
+For the `libgen` flag reference, see the [EDI tool](../tools/integration-tools/edi-tool.md#bal-edi-libgen) page.
 
 ## Best practices
 
