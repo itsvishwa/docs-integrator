@@ -1868,8 +1868,8 @@ const sidebars: SidebarsConfig = {
           type: 'category',
           label: 'Migration Guides',
           items: [
-            'guides/migration/migrating-from-mulesoft',
-            'guides/migration/migrating-from-tibco',
+            'guides/migration/from-mulesoft',
+            'guides/migration/from-tibco',
           ],
         },
       ],

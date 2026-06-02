@@ -1,6 +1,7 @@
 ---
 title: Migrating from MuleSoft
 description: Migration guide for developers moving from MuleSoft to WSO2 Integrator.
+slug: /guides/migration/from-mulesoft
 ---
 
 # Migrating from MuleSoft

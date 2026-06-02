@@ -27,5 +27,5 @@ Reusable integration patterns you can apply across projects:
 
 Coming from another platform? Start here:
 
-- **[From MuleSoft](migration/migrating-from-mulesoft.md)** -- Migrate from MuleSoft Anypoint
-- **[From TIBCO](migration/migrating-from-tibco.md)** -- Migrate from TIBCO BusinessWorks
+- **[Migrating from MuleSoft](/guides/migration/from-mulesoft)** -- Migrate from MuleSoft Anypoint
+- **[Migrating from TIBCO](/guides/migration/from-tibco)** -- Migrate from TIBCO BusinessWorks
