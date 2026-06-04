@@ -92,7 +92,7 @@ bal build
 
 This generates a fat JAR in the `target/bin/` directory:
 
-```
+```bash
 target/
   bin/
     my_integration.jar
