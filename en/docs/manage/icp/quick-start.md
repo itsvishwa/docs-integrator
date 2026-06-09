@@ -56,7 +56,7 @@ At a high level, the setup involves:
 
 Once connected, the runtime appears in the **Runtimes** view with status **RUNNING**.
 
-For the full connection procedure including field reference and troubleshooting, see [Connect an integration to ICP](connect-runtime.md).
+For the full connection procedure including field reference and troubleshooting, see [Connect an Integration to ICP](connect-runtime.md).
 
 ## 4. Create an environment (optional)
 
