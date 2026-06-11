@@ -75,7 +75,7 @@ The connection configuration is shared by every source.
 
 | Field | Type | Default | Description |
 |---|---|---|---|
-| **auth** | `OAuth2ClientCredentialsGrantConfig \| OAuth2RefreshTokenGrantConfig \| http:BearerTokenConfig` | — | Authentication configuration. See [Authentication](#authentication). |
+| **auth** | `OAuth2ClientCredentialsGrantConfig \| OAuth2RefreshTokenGrantConfig \| http:BearerTokenConfig` | — | Authentication configuration for the Microsoft Graph API. |
 | **serviceUrl** | `string` | `https://graph.microsoft.com/v1.0` | The base URL of the Microsoft Graph service. |
 
 Plus the [Standard HTTP advanced configurations](./model-providers.md#standard-http-advanced-configurations), which tune the underlying HTTP client and are forwarded to the Graph `sites` and `pages` clients.
