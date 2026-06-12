@@ -8,8 +8,6 @@ toc_max_heading_level: 4
 
 The `ballerinax/microsoft.sharepoint.pages` package exposes the following clients:
 
-Available clients:
-
 | Client | Purpose |
 |--------|---------|
 | [`Client`](#client) | Manage SharePoint site pages, canvas layouts, horizontal and vertical sections, web parts, and page metadata through the Microsoft Graph v1.0 API |
@@ -65,7 +63,7 @@ pages:ConnectionConfig config = {
         scopes: ["https://graph.microsoft.com/.default"]
     }
 };
-pages:Client client = check new (config);
+pages:Client sharepointClient = check new (config);
 ```
 
 ### Operations
