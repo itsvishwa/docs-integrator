@@ -7,6 +7,9 @@
 # Generated files
 .docusaurus
 .cache-loader
+comment-body.md
+head-links.txt
+base-links.txt
 
 # Misc
 .DS_Store

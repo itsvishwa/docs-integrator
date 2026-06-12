@@ -1,0 +1,116 @@
+name: Broken Link Check
+
+# Optional, non-blocking check. Builds the PR head and the base branch, crawls each
+# served build with linkinator (one uniform pass over links, images, and assets — no
+# per-element special casing), then reports what this PR introduced vs. what already
+# exists on main and posts/updates a comment on the PR. Every step exits 0 / is
+# continue-on-error, so this workflow never fails a PR. Do not add it as a required
+# status check in branch protection.
+#
+# The site is served under its production baseUrl, so baseUrl bugs (e.g. an <img
+# src="/img/..."> missing useBaseUrl) surface as real 404s.
+#
+# Note: for PRs from forks the pull_request token is read-only, so the comment
+# step is skipped/no-ops gracefully; the step summary still shows the results.
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  broken-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Build PR head
+        id: build-head
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npm ci
+          npm run build
+        env:
+          BASE_URL: /docs-integrator/
+
+      - name: Crawl PR head
+        if: always()
+        continue-on-error: true
+        # Crawl before the base build overwrites en/build. linkinator (a devDependency)
+        # follows every <a>/<img>/<link>/<script>; baseUrl is auto-detected from the build.
+        run: node en/scripts/crawl-site.mjs en/build en/head-links.txt
+
+      - name: Build base branch
+        id: build-base
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          HEAD_SHA="$(git rev-parse HEAD)"
+          git fetch origin "${{ github.base_ref }}"
+          git checkout "origin/${{ github.base_ref }}"
+          npm ci
+          npm run build
+          # Return to PR head and reinstall its deps (base lacks linkinator) so the
+          # PR-version scripts and the crawler are available for the base crawl.
+          git checkout "$HEAD_SHA"
+          npm ci
+        env:
+          BASE_URL: /docs-integrator/
+
+      - name: Crawl base branch
+        if: always()
+        continue-on-error: true
+        # en/build now holds the base-branch build; the script is the PR-head version.
+        run: node en/scripts/crawl-site.mjs en/build en/base-links.txt
+
+      - name: Report broken links and images
+        if: always()
+        continue-on-error: true
+        run: |
+          node en/scripts/report-broken-links.mjs \
+            --head en/head-links.txt --base en/base-links.txt --out en/comment-body.md
+
+      - name: Post results as a PR comment
+        if: always()
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'en/comment-body.md';
+            if (!fs.existsSync(path)) {
+              core.info('No comment body produced — skipping.');
+              return;
+            }
+            const body = fs.readFileSync(path, 'utf8');
+            const marker = '<!-- broken-link-check -->';
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            if (!issue_number) {
+              core.info('No PR number in context — skipping.');
+              return;
+            }
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100,
+            });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
