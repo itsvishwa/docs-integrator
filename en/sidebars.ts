@@ -1212,8 +1212,9 @@ const sidebars: SidebarsConfig = {
           ]
         },
         {
+          type: 'category',
           label: 'Microsoft SharePoint Sites',
-          link: { type: 'doc', id: 'connectors/catalog/storage-file/sharepoint.sites/overview' },
+          link: { type: 'doc', id: 'connectors/catalog/storage-file/sharepoint.sites/connector-overview' },
           items: [
             'connectors/catalog/storage-file/sharepoint.sites/setup-guide',
             'connectors/catalog/storage-file/sharepoint.sites/action-reference',
@@ -2266,5 +2267,5 @@ const sidebars: SidebarsConfig = {
   ],
 };
 
-
 export default sidebars;
+

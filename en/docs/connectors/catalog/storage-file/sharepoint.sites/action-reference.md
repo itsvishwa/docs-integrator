@@ -15,3 +15,7 @@ Available clients:
 | [`Client`](#client) | Manages SharePoint sites, lists, list items, columns, content types, drives, permissions, and analytics via the Microsoft Graph v1.0 API. |
 
 ---
+
+## Client
+
+Provides operations to manage SharePoint sites, lists, list items, columns, content types, drives, permissions, and analytics through the Microsoft Graph v1.0 API.
