@@ -1,7 +1,7 @@
 ---
 connector: true
 connector_name: "microsoft.sharepoint.pages"
-title: "Microsoft Sharepoint Pages"
+title: "Microsoft SharePoint Pages"
 description: "Overview of the ballerinax/microsoft.sharepoint.pages connector for WSO2 Integrator."
 ---
 
@@ -40,6 +40,6 @@ As an open source project, WSO2 welcomes contributions from the community.
 
 To contribute to the code for this connector, please create a pull request in the following repository.
 
-* [Microsoft Sharepoint Pages Connector GitHub repository](https://github.com/ballerina-platform/module-ballerinax-microsoft.sharepoint.pages)
+* [Microsoft SharePoint Pages Connector GitHub repository](https://github.com/ballerina-platform/module-ballerinax-microsoft.sharepoint.pages)
 
 Check the issue tracker for open issues that interest you. We look forward to receiving your contributions.
