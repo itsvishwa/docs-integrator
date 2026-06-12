@@ -55,6 +55,15 @@ jobs:
         # follows every <a>/<img>/<link>/<script>; baseUrl is auto-detected from the build.
         run: node en/scripts/crawl-site.mjs en/build en/head-links.txt
 
+      - name: Detect orphan pages (PR head)
+        if: always()
+        continue-on-error: true
+        # Also stash the PR-head script in /tmp so it can analyze the base checkout later
+        # (the base branch may have an older check-orphans.mjs without --out).
+        run: |
+          cp en/scripts/check-orphans.mjs /tmp/check-orphans.mjs
+          node en/scripts/check-orphans.mjs --out en/head-orphans.txt
+
       - name: Build base branch
         id: build-base
         continue-on-error: true
@@ -65,10 +74,13 @@ jobs:
           git checkout "origin/${{ github.base_ref }}"
           npm ci
           npm run build
+          # Detect orphans against the base source using the PR-head script.
+          node /tmp/check-orphans.mjs "$PWD/en" --out /tmp/base-orphans.txt || true
           # Return to PR head and reinstall its deps (base lacks linkinator) so the
           # PR-version scripts and the crawler are available for the base crawl.
           git checkout "$HEAD_SHA"
           npm ci
+          cp /tmp/base-orphans.txt en/base-orphans.txt 2>/dev/null || true
         env:
           BASE_URL: /docs-integrator/
 
@@ -78,12 +90,14 @@ jobs:
         # en/build now holds the base-branch build; the script is the PR-head version.
         run: node en/scripts/crawl-site.mjs en/build en/base-links.txt
 
-      - name: Report broken links and images
+      - name: Report broken links, images and orphans
         if: always()
         continue-on-error: true
         run: |
           node en/scripts/report-broken-links.mjs \
-            --head en/head-links.txt --base en/base-links.txt --out en/comment-body.md
+            --head en/head-links.txt --base en/base-links.txt \
+            --head-orphans en/head-orphans.txt --base-orphans en/base-orphans.txt \
+            --out en/comment-body.md
 
       - name: Post results as a PR comment
         if: always()

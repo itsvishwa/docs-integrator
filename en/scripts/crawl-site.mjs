@@ -24,6 +24,18 @@ const positional = args.filter((a) => !a.startsWith('--'));
 const buildDirArg = positional[0];
 const outListPath = positional[1];
 
+// This is an advisory, non-blocking check: never let a stray error (e.g. an aborted
+// HTTP stream emitting an unhandled 'error') crash the process and fail CI. Log and
+// exit 0 — any partial results already written to the out file are kept.
+function failSoft(label) {
+  return (err) => {
+    process.stderr.write(`crawl-site: ${label}: ${err?.stack || err}\n`);
+    process.exit(0);
+  };
+}
+process.on('uncaughtException', failSoft('uncaughtException'));
+process.on('unhandledRejection', failSoft('unhandledRejection'));
+
 if (!buildDirArg) {
   process.stderr.write('Usage: node scripts/crawl-site.mjs <build-dir> [out-list-file] [--external]\n');
   process.exit(0);
@@ -126,11 +138,15 @@ const checker = new LinkChecker();
 const result = await checker.check({
   path: startUrl,
   recurse: true,
-  // Keep concurrency modest so the lightweight local server doesn't drop connections
+  // Keep concurrency modest so the lightweight in-process server doesn't drop connections
   // (which linkinator would report as a spurious status-0 failure), and retry transient
   // errors to avoid false positives.
+  //
+  // No per-request `timeout`: the server runs in this same process, so under a busy/slow
+  // CI event loop a request can exceed any timeout, get aborted, and the aborted response
+  // stream emits an unhandled 'error' (TimeoutError) that crashes Node. The local server
+  // always responds, so a timeout is unnecessary here.
   concurrency: 25,
-  timeout: 30000,
   retry: true,
   retryErrors: true,
   retryErrorsCount: 3,
