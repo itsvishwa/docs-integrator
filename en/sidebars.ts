@@ -1204,7 +1204,7 @@ const sidebars: SidebarsConfig = {
         },
         {
           type: 'category',
-          label: 'Microsoft Sharepoint Pages',
+          label: 'Microsoft SharePoint Pages',
           link: { type: 'doc', id: 'connectors/catalog/storage-file/microsoft.sharepoint.pages/connector-overview' },
           items: [
             'connectors/catalog/storage-file/microsoft.sharepoint.pages/setup-guide',
