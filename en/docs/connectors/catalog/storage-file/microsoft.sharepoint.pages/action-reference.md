@@ -50,7 +50,7 @@ Provides operations to create, read, update, delete, and publish SharePoint site
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `tokenUrl` | <code>string</code> | <code>"https://login.microsoftonline.com/common/oauth2/v2.0/token"</code> | The token endpoint URL for OAuth2 client credentials grant |
+| `tokenUrl` | <code>string</code> | `https://login.microsoftonline.com/<TENANT_ID>/oauth2/v2.0/token` | The token endpoint URL for OAuth2 client credentials grant |
 
 ### Initializing the client
 
