@@ -22,6 +22,18 @@ The ICP console is a single-page application whose API endpoints are read from `
 
 Restart ICP after saving the file for the changes to take effect.
 
+## Update the backend configuration
+
+In addition to the frontend config, update the backend endpoint settings in `conf/deployment.toml` to reflect the external hostname:
+
+```toml
+backendGraphqlEndpoint       = "https://icp.example.com/graphql"
+backendAuthBaseUrl           = "https://icp.example.com/auth"
+backendObservabilityEndpoint = "https://icp.example.com/icp/observability"
+```
+
+These values default to `https://localhost:9446` and must match the externally accessible URL whenever ICP is accessed through a hostname other than `localhost`. Restart ICP after saving the file.
+
 ## Update runtime connections
 
 WSO2 Integrator runtimes send heartbeats to ICP over a dedicated registration port. If runtimes connect to ICP through the proxy, update `serverUrl` in the runtime's `Config.toml`:

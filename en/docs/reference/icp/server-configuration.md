@@ -19,6 +19,16 @@ All values are set in `<ICP_HOME>/conf/deployment.toml`. Commented-out keys show
 | `schedulerIntervalSeconds`           | `int`     | `60`        | How often ICP checks for inactive runtimes and marks them as offline |
 | `refreshTokenCleanupIntervalSeconds` | `int`     | `86400`     | How often expired refresh tokens are purged from the database         |
 
+## Backend Endpoint Settings
+
+These values default to `localhost:9446` and must be updated when ICP is accessed through a different hostname or behind a reverse proxy.
+
+| Key                             | Type     | Default                                       | Description                                          |
+| ------------------------------- | -------- | --------------------------------------------- | ---------------------------------------------------- |
+| `backendGraphqlEndpoint`        | `string` | `"https://localhost:9446/graphql"`            | URL of the ICP GraphQL API endpoint                  |
+| `backendAuthBaseUrl`            | `string` | `"https://localhost:9446/auth"`               | Base URL of the ICP authentication service           |
+| `backendObservabilityEndpoint`  | `string` | `"https://localhost:9446/icp/observability"`  | URL of the ICP observability endpoint                |
+
 ## Authentication Settings
 
 | Key                          | Type      | Default                    | Description                                                       |
