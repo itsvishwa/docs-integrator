@@ -1,0 +1,17 @@
+---
+connector: true
+connector_name: "sharepoint.sites"
+toc_max_heading_level: 4
+---
+
+# Actions
+
+The `ballerinax/microsoft.sharepoint.sites` package exposes the following client:
+
+Available clients:
+
+| Client | Purpose |
+|--------|---------|
+| [`Client`](#client) | Manages SharePoint sites, lists, list items, columns, content types, drives, permissions, and analytics via the Microsoft Graph v1.0 API. |
+
+---
