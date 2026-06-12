@@ -1,7 +1,7 @@
 ---
 connector: true
 connector_name: "sharepoint.sites"
-title: "Microsoft Sharepoint Sites"
+title: "Microsoft SharePoint Sites"
 description: "Overview of the ballerinax/microsoft.sharepoint.sites connector for WSO2 Integrator."
 ---
 
@@ -22,17 +22,17 @@ The `ballerinax/microsoft.sharepoint.sites` connector integrates with the Micros
 
 The connector exposes a single client that covers all SharePoint Sites operations exposed by Microsoft Graph v1.0.
 
-| Client | Actions |
-|--------|---------|
+| Client   | Actions                                                                                                        |
+| -------- | -------------------------------------------------------------------------------------------------------------- |
 | `Client` | Sites, Lists, List items, Columns, Content types, Drives, Permissions, Analytics, Operations, External columns |
 
 See the **[Action Reference](action-reference.md)** for the full list of operations, parameters, and sample code for each client.
 
 ## Documentation
 
-* **[Setup Guide](setup-guide.md)**: Walks through registering an Azure AD application and configuring the API permissions required to access SharePoint via Microsoft Graph.
+- **[Setup Guide](setup-guide.md)**: Walks through registering an Azure AD application and configuring the API permissions required to access SharePoint via Microsoft Graph.
 
-* **[Action Reference](action-reference.md)**: Full reference for all clients — operations, parameters, return types, and sample code.
+- **[Action Reference](action-reference.md)**: Full reference for all clients — operations, parameters, return types, and sample code.
 
 ## How to contribute
 
@@ -40,6 +40,7 @@ As an open source project, WSO2 welcomes contributions from the community.
 
 To contribute to the code for this connector, please create a pull request in the following repository.
 
-* [Microsoft Sharepoint Sites Connector GitHub repository](https://github.com/ballerina-platform/module-ballerinax-microsoft.sharepoint.sites)
+- [Microsoft SharePoint Sites Connector GitHub repository](https://github.com/ballerina-platform/module-ballerinax-microsoft.sharepoint.sites)
 
 Check the issue tracker for open issues that interest you. We look forward to receiving your contributions.
+
