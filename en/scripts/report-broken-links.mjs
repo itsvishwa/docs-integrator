@@ -140,10 +140,32 @@ const orphansCat = orphansHead ? makeCategory(orphansHead, parseOrphans(flag('--
 const linkSort = (a, b) => a.target.localeCompare(b.target);
 const orphanSort = (a, b) => a.id.localeCompare(b.id);
 
+// Gate: this PR fails the check when it INTRODUCES broken refs/orphans (not pre-existing).
+// A category with no base data contributes 0 (advisory) so a flaky base build never fails.
+const failOnIntroduced = argv.includes('--fail-on-introduced');
+const introducedFail =
+  (linksCat.introduced ? linksCat.introduced.length : 0) +
+  (orphansCat && orphansCat.introduced ? orphansCat.introduced.length : 0);
+const comparable = linksCat.hasBase || (orphansCat && orphansCat.hasBase);
+const willFail = failOnIntroduced && introducedFail > 0;
+
+function statusBanner() {
+  if (!failOnIntroduced || !comparable) {
+    return '> ℹ️ **Advisory** — reporting only, not failing the check' +
+      (failOnIntroduced && !comparable ? ' (no base-branch data to compare).' : '.');
+  }
+  if (introducedFail > 0) {
+    return `> ❌ **Failing** — this PR introduces **${introducedFail}** new broken reference(s)/orphan page(s). Fix them or the check stays red.`;
+  }
+  return '> ✅ **Passing** — this PR introduces no new broken links, images, or orphan pages.';
+}
+
 function buildReport(cap) {
   const lines = [];
   lines.push(MARKER);
   lines.push('# Broken links, images & orphan pages');
+  lines.push('');
+  lines.push(statusBanner());
   lines.push('');
   lines.push('_Links/images come from one crawl of the production build (baseUrl-aware). Orphans are docs not referenced by `sidebars.ts`._');
   lines.push('');
@@ -180,4 +202,5 @@ if (flag('--out')) {
   try { writeFileSync(flag('--out'), commentBody); } catch {}
 }
 
-process.exit(0);
+// Fail the check only for regressions this PR introduced (when enabled and comparable).
+process.exit(willFail ? 1 : 0);

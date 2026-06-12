@@ -92,12 +92,19 @@ jobs:
 
       - name: Report broken links, images and orphans
         if: always()
-        continue-on-error: true
+        # This step is the GATE: it exits non-zero (failing the job) only when the PR
+        # INTRODUCES new broken refs/orphans. Pre-existing issues never fail. Enforcement
+        # is enabled only when both builds succeeded, so a flaky build falls back to
+        # advisory. The PR comment is still posted by the next step (if: always()).
         run: |
+          FAIL_FLAG=""
+          if [ "${{ steps.build-head.outcome }}" = "success" ] && [ "${{ steps.build-base.outcome }}" = "success" ]; then
+            FAIL_FLAG="--fail-on-introduced"
+          fi
           node en/scripts/report-broken-links.mjs \
             --head en/head-links.txt --base en/base-links.txt \
             --head-orphans en/head-orphans.txt --base-orphans en/base-orphans.txt \
-            --out en/comment-body.md
+            --out en/comment-body.md $FAIL_FLAG
 
       - name: Post results as a PR comment
         if: always()
