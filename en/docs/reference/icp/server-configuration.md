@@ -7,7 +7,7 @@ description: Complete key reference for ICP Server configuration settings in dep
 
 All values are set in `<ICP_HOME>/conf/deployment.toml`. Commented-out keys show default values.
 
-## Server Settings
+## Server settings
 
 | Key                                  | Type      | Default     | Description                                                           |
 | ------------------------------------ | --------- | ----------- | --------------------------------------------------------------------- |
@@ -19,7 +19,7 @@ All values are set in `<ICP_HOME>/conf/deployment.toml`. Commented-out keys show
 | `schedulerIntervalSeconds`           | `int`     | `60`        | How often ICP checks for inactive runtimes and marks them as offline |
 | `refreshTokenCleanupIntervalSeconds` | `int`     | `86400`     | How often expired refresh tokens are purged from the database         |
 
-## Backend Endpoint Settings
+## Backend endpoint settings
 
 These values default to `localhost:9446` and must be updated when ICP is accessed through a different hostname or behind a reverse proxy.
 
@@ -29,7 +29,7 @@ These values default to `localhost:9446` and must be updated when ICP is accesse
 | `backendAuthBaseUrl`            | `string` | `"https://localhost:9446/auth"`               | Base URL of the ICP authentication service           |
 | `backendObservabilityEndpoint`  | `string` | `"https://localhost:9446/icp/observability"`  | URL of the ICP observability endpoint                |
 
-## Authentication Settings
+## Authentication settings
 
 | Key                          | Type      | Default                    | Description                                                       |
 | ---------------------------- | --------- | -------------------------- | ----------------------------------------------------------------- |
