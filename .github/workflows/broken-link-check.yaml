@@ -1,11 +1,11 @@
 name: Broken Link Check
 
-# Optional, non-blocking check. Builds the PR head and the base branch, crawls each
-# served build with linkinator (one uniform pass over links, images, and assets — no
-# per-element special casing), then reports what this PR introduced vs. what already
-# exists on main and posts/updates a comment on the PR. Every step exits 0 / is
-# continue-on-error, so this workflow never fails a PR. Do not add it as a required
-# status check in branch protection.
+# Builds the PR head and the base branch, crawls each served build with linkinator (one
+# uniform pass over links, images, and assets — no per-element special casing), posts/
+# updates a PR comment with the introduced-vs-already-on-main breakdown, and FAILS the
+# job (red) when ANY broken link/image is found on the branch (--fail-on-any). To keep
+# merging optional, do NOT add this as a required status check in branch protection — the
+# run goes red but won't block the merge button.
 #
 # The site is served under its production baseUrl, so baseUrl bugs (e.g. an <img
 # src="/img/..."> missing useBaseUrl) surface as real 404s.
@@ -92,19 +92,16 @@ jobs:
 
       - name: Report broken links, images and orphans
         if: always()
-        # This step is the GATE: it exits non-zero (failing the job) only when the PR
-        # INTRODUCES new broken refs/orphans. Pre-existing issues never fail. Enforcement
-        # is enabled only when both builds succeeded, so a flaky build falls back to
-        # advisory. The PR comment is still posted by the next step (if: always()).
+        # This step is the GATE: --fail-on-any makes it exit non-zero (failing the job)
+        # whenever ANY broken link/image is found on this branch. The base-branch crawl is
+        # still passed so the comment shows the introduced-vs-already-on-main breakdown, but
+        # it does NOT affect pass/fail. The comment is still posted by the next step
+        # (if: always()), even on a red run.
         run: |
-          FAIL_FLAG=""
-          if [ "${{ steps.build-head.outcome }}" = "success" ] && [ "${{ steps.build-base.outcome }}" = "success" ]; then
-            FAIL_FLAG="--fail-on-introduced"
-          fi
           node en/scripts/report-broken-links.mjs \
             --head en/head-links.txt --base en/base-links.txt \
             --head-orphans en/head-orphans.txt --base-orphans en/base-orphans.txt \
-            --out en/comment-body.md $FAIL_FLAG
+            --out en/comment-body.md --fail-on-any
 
       - name: Post results as a PR comment
         if: always()

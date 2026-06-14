@@ -140,16 +140,25 @@ const orphansCat = orphansHead ? makeCategory(orphansHead, parseOrphans(flag('--
 const linkSort = (a, b) => a.target.localeCompare(b.target);
 const orphanSort = (a, b) => a.id.localeCompare(b.id);
 
-// Gate: this PR fails the check when it INTRODUCES broken refs/orphans (not pre-existing).
-// A category with no base data contributes 0 (advisory) so a flaky base build never fails.
+// Gate. Two modes:
+//   --fail-on-any         fail when ANY broken link/image exists on this branch (pre-existing
+//                         included). Scoped to links/images; orphans are reported only.
+//   --fail-on-introduced  fail only when this PR introduces new broken refs/orphans
+//                         (advisory when there is no base data to compare).
+const failOnAny = argv.includes('--fail-on-any');
 const failOnIntroduced = argv.includes('--fail-on-introduced');
 const introducedFail =
   (linksCat.introduced ? linksCat.introduced.length : 0) +
   (orphansCat && orphansCat.introduced ? orphansCat.introduced.length : 0);
 const comparable = linksCat.hasBase || (orphansCat && orphansCat.hasBase);
-const willFail = failOnIntroduced && introducedFail > 0;
+const willFail = failOnAny ? linksCat.total > 0 : failOnIntroduced && introducedFail > 0;
 
 function statusBanner() {
+  if (failOnAny) {
+    return linksCat.total > 0
+      ? `> ❌ **Failing** — **${linksCat.total}** broken link(s)/image(s) found on this branch. The check stays red until all are fixed.`
+      : '> ✅ **Passing** — no broken links or images found.';
+  }
   if (!failOnIntroduced || !comparable) {
     return '> ℹ️ **Advisory** — reporting only, not failing the check' +
       (failOnIntroduced && !comparable ? ' (no base-branch data to compare).' : '.');
