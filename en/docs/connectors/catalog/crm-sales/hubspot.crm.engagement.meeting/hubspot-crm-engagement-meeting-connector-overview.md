@@ -1,5 +1,8 @@
 ---
 title: "Overview"
+description: "HubSpot CRM is a cloud-based customer relationship management platform that tracks meetings, contacts, deals, and other engagement activities."
+connector: true
+connector_name: "hubspot.crm.engagement.meeting"
 ---
 
 # Overview

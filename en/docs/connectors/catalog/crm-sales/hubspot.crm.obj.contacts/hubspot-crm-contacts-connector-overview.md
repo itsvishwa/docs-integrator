@@ -1,5 +1,8 @@
 ---
 title: "Overview"
+description: "HubSpot CRM is a cloud-based customer relationship management platform that helps businesses manage contacts, deals, and marketing pipelines."
+connector: true
+connector_name: "hubspot.crm.obj.contacts"
 ---
 
 # Overview

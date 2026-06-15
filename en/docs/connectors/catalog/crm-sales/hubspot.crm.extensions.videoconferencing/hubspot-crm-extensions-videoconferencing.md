@@ -1,7 +1,11 @@
 ---
-title: "HubSpot CRM Extensions Videoconferencing"
-description: "Overview of the ballerinax/hubspot.crm.extensions.videoconferencing connector for WSO2 Integrator."
+title: "Overview"
+description: "HubSpot CRM Extensions Videoconferencing is an API that lets you register and manage external video conferencing application settings within HubSpot."
+connector: true
+connector_name: "hubspot.crm.extensions.videoconferencing"
 ---
+
+# Overview
 
 HubSpot CRM Extensions Videoconferencing is an API that lets you register and manage external video conferencing application settings within HubSpot. The Ballerina `ballerinax/hubspot.crm.extensions.videoconferencing` connector (v2.0.0) provides programmatic access to these settings through the HubSpot REST API, enabling you to create, retrieve, update, and delete videoconferencing webhook URLs for your HubSpot app.
 

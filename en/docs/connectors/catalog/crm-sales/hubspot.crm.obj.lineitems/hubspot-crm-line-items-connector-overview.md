@@ -1,5 +1,8 @@
 ---
 title: "Overview"
+description: "HubSpot CRM Line Items represent individual products or services attached to deals in HubSpot, enabling detailed tracking of what is being sold and at what price."
+connector: true
+connector_name: "hubspot.crm.obj.lineitems"
 ---
 
 # Overview

@@ -1,5 +1,8 @@
 ---
 title: "Overview"
+description: "HubSpot CRM Feedback provides access to HubSpot's Feedback Submissions API, allowing you to retrieve and manage customer feedback data collected through HubSpot surveys and feedback tools."
+connector: true
+connector_name: "hubspot.crm.obj.feedback"
 ---
 
 # Overview

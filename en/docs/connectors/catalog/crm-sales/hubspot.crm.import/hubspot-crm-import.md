@@ -1,7 +1,11 @@
 ---
-title: "HubSpot CRM Import"
-description: "Overview of the ballerinax/hubspot.crm.import connector for WSO2 Integrator."
+title: "Overview"
+description: "HubSpot CRM Import allows you to bulk-import contacts, companies, deals, and other CRM objects from CSV files into HubSpot."
+connector: true
+connector_name: "hubspot.crm.import"
 ---
+
+# Overview
 
 HubSpot CRM Import allows you to bulk-import contacts, companies, deals, and other CRM objects from CSV files into HubSpot. The Ballerina `ballerinax/hubspot.crm.import` connector (v4.0.0) provides programmatic access to the HubSpot CRM Imports API, enabling you to start imports, monitor their progress, retrieve errors, and cancel active imports from your Ballerina integration flows.
 

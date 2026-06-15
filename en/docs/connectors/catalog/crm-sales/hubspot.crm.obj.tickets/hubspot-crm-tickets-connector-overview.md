@@ -1,5 +1,8 @@
 ---
 title: "Overview"
+description: "HubSpot is an AI-powered CRM platform that centralizes customer interactions, sales pipelines, and support workflows."
+connector: true
+connector_name: "hubspot.crm.obj.tickets"
 ---
 
 # Overview

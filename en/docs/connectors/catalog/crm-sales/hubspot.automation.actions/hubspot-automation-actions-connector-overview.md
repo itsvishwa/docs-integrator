@@ -1,5 +1,8 @@
 ---
 title: "Overview"
+description: "HubSpot Automation Actions is part of the HubSpot CRM platform, enabling developers to create custom workflow actions (extensions) that integrate external services into HubSpot workflows."
+connector: true
+connector_name: "hubspot.automation.actions"
 ---
 
 # Overview

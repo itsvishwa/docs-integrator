@@ -1,7 +1,11 @@
 ---
-title: "HubSpot CRM Associations Schema"
-description: "Overview of the ballerinax/hubspot.crm.associations.schema connector for WSO2 Integrator."
+title: "Overview"
+description: "HubSpot is an AI-powered customer relationship management (CRM) platform."
+connector: true
+connector_name: "hubspot.crm.associations.schema"
 ---
+
+# Overview
 
 HubSpot is an AI-powered customer relationship management (CRM) platform. The Ballerina `ballerinax/hubspot.crm.associations.schema` connector (v2.0.0) provides programmatic access to HubSpot's CRM Associations Schema API, enabling you to manage association definitions and configurations between CRM object types such as contacts, companies, deals, and line items.
 

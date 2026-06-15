@@ -1,5 +1,8 @@
 ---
 title: "Overview"
+description: "HubSpot CRM Companies is a cloud-based CRM platform that enables you to manage company records, properties, and associations at scale."
+connector: true
+connector_name: "hubspot.crm.obj.companies"
 ---
 
 # Overview
