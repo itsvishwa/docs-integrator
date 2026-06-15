@@ -7,7 +7,7 @@ connector_name: "hubspot.crm.associations"
 
 # Overview
 
-HubSpot CRM Associations is the HubSpot API for creating, reading, and managing relationships between CRM objects such as contacts, companies, deals, and tickets. The Ballerina `ballerinax/hubspot.crm.associations` connector (v2.0.0) provides programmatic access to HubSpot's Associations v4 API, enabling you to define both default HubSpot-defined and custom labeled associations between any two CRM object types within your Ballerina integration flows.
+HubSpot CRM Associations is the HubSpot API for creating, reading, and managing relationships between CRM objects such as contacts, companies, deals, and tickets. The `ballerinax/hubspot.crm.associations` connector (v2.0.0) provides programmatic access to HubSpot's Associations v4 API, enabling you to define both default HubSpot-defined and custom labeled associations between any two CRM object types within your integration flows.
 
 
 ## Key features

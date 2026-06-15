@@ -7,7 +7,7 @@ connector_name: "hubspot.crm.extensions.timelines"
 
 # Overview
 
-HubSpot CRM Extensions Timelines API allows you to create custom timeline events that appear on HubSpot CRM record pages. The Ballerina `ballerinax/hubspot.crm.extensions.timelines` connector (v2.0.0) provides programmatic access to manage event templates, tokens, and timeline events through the HubSpot Timelines API v3.
+HubSpot CRM Extensions Timelines API allows you to create custom timeline events that appear on HubSpot CRM record pages. The `ballerinax/hubspot.crm.extensions.timelines` connector (v2.0.0) provides programmatic access to manage event templates, tokens, and timeline events through the HubSpot Timelines API v3.
 
 
 ## Key features
