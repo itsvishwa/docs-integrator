@@ -133,7 +133,16 @@ function renderCategory(cat, { noun, display, sortFn }, cap) {
 
 // --- assemble ------------------------------------------------------------
 
-const linksCat = makeCategory(parseLinks(flag('--head')), parseLinks(flag('--base')));
+// Fail closed: the --head links list is required. If the crawl step failed to produce
+// it (the crawl steps are continue-on-error), an empty category would let --fail-on-any
+// pass green despite having no data to gate on.
+const headPath = flag('--head');
+if (!headPath || !existsSync(headPath)) {
+  console.error(`report-broken-links: required --head input not found: ${headPath ?? '(not provided)'}`);
+  process.exit(1);
+}
+
+const linksCat = makeCategory(parseLinks(headPath), parseLinks(flag('--base')));
 const orphansHead = parseOrphans(flag('--head-orphans'));
 const orphansCat = orphansHead ? makeCategory(orphansHead, parseOrphans(flag('--base-orphans'))) : null;
 

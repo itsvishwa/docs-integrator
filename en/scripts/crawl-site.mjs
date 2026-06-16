@@ -90,7 +90,14 @@ const MIME = {
 // Trailing slashes are treated as equivalent ("/foo/" -> "foo.html") so that canonical /
 // alternate metadata links don't show up as false 404s; only genuinely missing targets fail.
 async function resolveFile(rel) {
-  rel = decodeURIComponent(rel.split('?')[0].split('#')[0]).replace(/^\/+/, '').replace(/\/+$/, '');
+  try {
+    rel = decodeURIComponent(rel.split('?')[0].split('#')[0]);
+  } catch {
+    // Malformed percent-encoding: treat as an unresolvable path (404) rather than
+    // letting the URIError reject the request handler.
+    return null;
+  }
+  rel = rel.replace(/^\/+/, '').replace(/\/+$/, '');
   const candidates = rel === ''
     ? [join(buildDir, 'index.html')]
     : [join(buildDir, rel), join(buildDir, rel + '.html'), join(buildDir, rel, 'index.html')];
