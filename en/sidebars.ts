@@ -1214,10 +1214,10 @@ const sidebars: SidebarsConfig = {
         {
           type: 'category',
           label: 'Microsoft SharePoint Sites',
-          link: { type: 'doc', id: 'connectors/catalog/storage-file/sharepoint.sites/connector-overview' },
+          link: { type: 'doc', id: 'connectors/catalog/storage-file/microsoft.sharepoint.sites/connector-overview' },
           items: [
-            'connectors/catalog/storage-file/sharepoint.sites/setup-guide',
-            'connectors/catalog/storage-file/sharepoint.sites/action-reference',
+            'connectors/catalog/storage-file/microsoft.sharepoint.sites/setup-guide',
+            'connectors/catalog/storage-file/microsoft.sharepoint.sites/action-reference',
           ],
         },
         {
