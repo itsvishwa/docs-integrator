@@ -321,8 +321,8 @@ wso2:
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
       alb.ingress.kubernetes.io/certificate-arn: <CERT_ARN>
       alb.ingress.kubernetes.io/backend-protocol: HTTPS
-      alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
-      alb.ingress.kubernetes.io/healthcheck-port: "9743"
+      alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
+      alb.ingress.kubernetes.io/healthcheck-port: "9446"
       alb.ingress.kubernetes.io/healthcheck-path: /dashboard/api/healthz
 ```
 
