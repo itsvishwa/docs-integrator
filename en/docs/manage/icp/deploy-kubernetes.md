@@ -359,7 +359,7 @@ azure:
 | `wso2.deployment.hostname` | `icp.wso2.com` | Hostname exposed by the Gateway or Ingress |
 | `wso2.deployment.image.tag` | `2.0.0` | ICP container image tag |
 | `wso2.config.serverPort` | `9446` | HTTPS port for the ICP console and API |
-| `wso2.config.runtimePort` | `9445` | MI artifact management API port |
+| `wso2.config.runtimePort` | `9445` | Port that MI runtime nodes use to register with ICP and send heartbeats |
 | `wso2.config.schedulerIntervalSeconds` | `30` | How often ICP polls runtimes for status |
 | `wso2.config.logLevel` | `INFO` | Log verbosity: `DEBUG`, `INFO`, `WARN`, `ERROR` |
 | `wso2.config.frontendJwtHMACSecret` | — | JWT signing secret (min 32 chars). Change before production. |
