@@ -2130,10 +2130,11 @@ const sidebars: SidebarsConfig = {
         },
         {
           type: 'category',
-          label: 'ICP',
+          label: 'WSO2 Integration Control Plane',
           link: { type: 'doc', id: 'manage/icp/integration-control-plane' },
           items: [
             'manage/icp/install-icp',
+            'manage/icp/deploy-on-kubernetes',
             'manage/icp/icp-console-overview',
             'manage/icp/quick-start',
             'manage/icp/connect-runtime',
