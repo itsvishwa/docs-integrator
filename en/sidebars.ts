@@ -2134,7 +2134,7 @@ const sidebars: SidebarsConfig = {
           link: { type: 'doc', id: 'manage/icp/integration-control-plane' },
           items: [
             'manage/icp/install-icp',
-            'manage/icp/deploy-on-kubernetes',
+            'manage/icp/deploy-kubernetes',
             'manage/icp/icp-console-overview',
             'manage/icp/quick-start',
             'manage/icp/connect-runtime',
