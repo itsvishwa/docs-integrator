@@ -34,7 +34,7 @@ The default profile handles most streaming integration needs. You may need the [
 
 ## Building blocks of stream processing
 
-This section outlines the foundational components used to implement streaming integrations within the WSO2 Integrator platform.
+This section outlines the foundational components used to implement streaming integrations within the WSO2 Integrator: Default profile.
 
 ### Streams {#streams}
 
