@@ -289,7 +289,7 @@ Beyond message brokers, the default profile exposes streams of events from datab
 | [Salesforce](https://wso2.com/integration-platform/docs/connectors/catalog/crm-sales/salesforce/connector-overview/) | Salesforce events | Platform events, change data capture events |
 | [GitHub Trigger](https://central.ballerina.io/ballerinax/trigger.github/latest) | GitHub Webhooks | Repository, PR, issue events |
 | [Email](https://wso2.com/integration-platform/docs/connectors/catalog/built-in/email/) | POP3 / IMAP4 | New email messages |
-| [Twilio Trigger](https://central.ballerina.io/ballerinax/twilio/5.0.2) | Twilio | SMS, voice events |
+| [Twilio Trigger](https://central.ballerina.io/ballerinax/twilio/latest) | Twilio | SMS, voice events |
 
 ### CDC example (PostgreSQL)
 
