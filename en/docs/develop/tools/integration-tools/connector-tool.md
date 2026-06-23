@@ -4,7 +4,7 @@ title: Connector Tool
 description: Generate production-ready Ballerina connectors from OpenAPI specifications using an AI-assisted pipeline.
 ---
 
-# Connector Tool <span style={{backgroundColor: '#64748B', color: '#fff', fontSize: '0.75rem', padding: '2px 8px', borderRadius: '4px', verticalAlign: 'middle', fontWeight: 500}}>Pre-release</span>
+# Connector Tool <Span Style={{backgroundColor: '#64748B', Color: '#Fff', FontSize: '0.75rem', Padding: '2px 8px', BorderRadius: '4px', VerticalAlign: 'Middle', FontWeight: 500}}>Pre-Release</span>
 
 The `bal connector` tool automates the full lifecycle of building a Ballerina connector from an OpenAPI specification. It runs a five-stage pipeline (sanitizing the spec, generating and validating a typed client, creating tests and usage examples, and producing documentation) using Anthropic Claude to handle AI-assisted steps such as fixing compilation errors, generating realistic examples, and filling in missing operation identifiers.
 
