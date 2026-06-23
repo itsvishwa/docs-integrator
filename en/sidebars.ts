@@ -329,6 +329,7 @@ const sidebars: SidebarsConfig = {
                 'develop/tools/integration-tools/wsdl-tool',
                 'develop/tools/integration-tools/xsd-tool',
                 'develop/tools/integration-tools/persist-tool',
+                'develop/tools/integration-tools/connector-tool',
               ],
             },
             {
