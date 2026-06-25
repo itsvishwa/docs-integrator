@@ -2223,6 +2223,7 @@ const sidebars: SidebarsConfig = {
         },
 
         'reference/supported-protocols',
+        'reference/streaming-capabilities',
         {
           type: 'category',
           label: 'Supported Data Formats',
