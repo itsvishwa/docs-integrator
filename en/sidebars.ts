@@ -2116,6 +2116,25 @@ const sidebars: SidebarsConfig = {
                 'manage/cloud/audit/compliance-data-residency',
               ],
             },
+            // API Management
+            {
+              type: 'category',
+              label: 'API Management',
+              link: { type: 'doc', id: 'manage/cloud/api-management/overview' },
+              items: [
+                'manage/cloud/api-management/lifecycle-management',
+                'manage/cloud/api-management/api-security',
+                {
+                  type: 'category',
+                  label: 'Consuming APIs',
+                  items: [
+                    'manage/cloud/api-management/consuming-apis/consuming-an-api-secured-with-an-api-key',
+                    'manage/cloud/api-management/consuming-apis/consuming-an-api-secured-with-oauth2',
+                  ],
+                },
+                'manage/cloud/api-management/api-rate-limiting',
+              ],
+            },
             // Private data plane
             {
               type: 'category',
