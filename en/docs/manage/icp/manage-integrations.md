@@ -113,7 +113,7 @@ When operational, the page provides:
 
 - **Summary cards**: Total Requests, Error Count, Error Percentage, and P95 Latency
 - **Overview charts**: Requests Per Minute and Request Latency (average, P50, P95, P99)
-- **Most Used APIs**: Table with per-endpoint request counts and average response times
+- **Most Used APIs**: Table with per-endpoint request counts, error counts, and average response times
 - **Statistics of APIs**: Section with an API filter dropdown, showing Requests Per Minute, Average Request Latency, Successful Requests by API, and Failed Requests by API charts
 
 ### Listeners

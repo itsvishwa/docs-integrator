@@ -70,7 +70,7 @@ Replace all placeholders with your own values before running the command.
 
 ## Step 2: Configure the cipher tool
 
-The cipher tool and ICP support multiple keystore types. PKCS12 (`.p12`) is the recommended format, but JKS and other standard Java keystore types are also supported. Adjust the type values in the steps below to match your keystore format.
+The cipher tool and ICP support both PKCS12 (`.p12`) and JKS keystore types, with PKCS12 being the recommended format. Adjust the type values in the steps below to match your keystore format.
 
 1. Copy your keystore file into the `conf/security/` directory of your ICP installation.
 2. Open `conf/cipher-standalone-config.properties` and update the following properties to point to your keystore:
@@ -179,16 +179,16 @@ cipherPrivateKeyPassword = "<your-key-pwd>"
 | `cipherKeystorePassword` | Password to open the keystore |
 | `cipherPrivateKeyPassword` | Password for the private key entry |
 
-:::note
-These values must match exactly what you used when generating or obtaining the keystore and what you configured in `cipher-standalone-config.properties` in Step 2. If they differ, ICP will fail to decrypt the secrets at startup.
-:::
-
 Alternatively, the keystore passwords can be provided as environment variables, which take precedence over the `deployment.toml` values:
 
 ```bash
 export ICP_CIPHER_KEYSTORE_PASSWORD="<your-keystore-pwd>"
 export ICP_PRIVATE_KEY_PASSWORD="<your-key-pwd>"
 ```
+
+:::note
+For simplicity, this guide points ICP to the same keystore used by the cipher tool in Step 2. This is not required: ICP can use a different keystore file, path, or alias, as long as it contains the same key pair. Secrets are encrypted with the public key, so ICP needs the matching private key to decrypt them. If the key pairs differ, ICP will fail to decrypt the secrets at startup.
+:::
 
 ## How ICP decrypts secrets at startup
 

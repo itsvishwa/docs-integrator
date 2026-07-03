@@ -18,7 +18,9 @@ backendAuthBaseUrl           = "https://icp.example.com/auth"
 backendObservabilityEndpoint = "https://icp.example.com/icp/observability"
 ```
 
-If not set, these values default to `https://localhost:9446`. When ICP starts, it reads these settings from `conf/deployment.toml` and propagates them into the console frontend automatically (you do not need to edit `www/config.json` directly). Restart ICP for the changes to take effect.
+If not set, these values default to the values shown above under `https://localhost:9446/...`.
+
+When ICP starts, it reads these settings from `conf/deployment.toml` and propagates them into the console frontend automatically (you do not need to edit `www/config.json` directly). Restart ICP for the changes to take effect.
 
 ## Update runtime connections
 
