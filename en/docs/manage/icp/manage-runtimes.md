@@ -44,7 +44,7 @@ Click **+ Add Runtime** on an environment section to generate a secret and get a
 
 1. Navigate to the **Runtimes** section at the integration level, then click **Manage Secrets** on any environment section.
 2. The secrets panel opens showing all secrets for that environment - both bound (claimed by a runtime) and unbound (not yet claimed by any runtime).
-3. If there are no secrets, the panel shows: *"No bound secrets for this integration in this environment."*
+3. If there are no secrets, the panel shows: *"No secrets for this integration in this environment."*
 4. Click the delete icon next to a secret to revoke it.
 
 ## Scope differences
