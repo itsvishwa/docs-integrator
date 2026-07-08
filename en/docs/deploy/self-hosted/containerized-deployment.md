@@ -579,9 +579,9 @@ bal build
 
 This generates the Kubernetes manifests under `target/kubernetes/my_integration/` and the Docker build context under `target/docker/my_integration/`.
 
-### Step 4: Build and push the image for linux/amd64
+### Step 4: Build and push the image
 
-EKS nodes run on `x86_64`. If you are building on Apple Silicon or another ARM machine, use `docker buildx` on the generated build context to produce a `linux/amd64` image and push it directly to ECR:
+For **x86_64 node groups**: if you are building on Apple Silicon or another ARM machine, use `docker buildx` to produce a `linux/amd64` image and push it directly to ECR:
 
 ```bash
 aws ecr get-login-password --region <region> | \
@@ -595,7 +595,7 @@ docker buildx build \
 ```
 
 :::tip
-If your build machine is already `x86_64`, you can skip the `docker buildx` step and use `docker push` on the image built by `bal build` instead.
+If your build machine is already `x86_64`, you can skip `docker buildx` and use `docker push` on the image built by `bal build` instead. For **Arm64 node groups**, omit the `--platform` flag or set it to `linux/arm64`.
 :::
 
 ### Step 5: Configure VPC endpoints for private clusters
