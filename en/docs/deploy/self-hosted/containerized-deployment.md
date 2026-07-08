@@ -521,24 +521,72 @@ Amazon Elastic Kubernetes Service (EKS) follows the same Kubernetes deployment p
 
 In addition to the [general prerequisites](#prerequisites), you need:
 
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-clarkiv.html) installed and configured (`aws configure` or SSO login)
-- An EKS cluster with `kubectl` configured against it: `aws eks update-kubeconfig --region <region> --name <cluster-name>`
-- An [Amazon ECR](https://aws.amazon.com/ecr/) repository for your image
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) installed and configured (`aws configure` or `aws sso login`)
+- An EKS cluster with `kubectl` configured: `aws eks update-kubeconfig --region <region> --name <cluster-name>`
+- An [Amazon ECR](https://aws.amazon.com/ecr/) repository created for your image:
 
-### Step 1: Set the cloud target and build
+```bash
+aws ecr create-repository --region <region> --repository-name my-integration
+```
 
-Set the cloud target to `k8s` and build with your ECR repository as the image repository:
+### Step 1: Set the cloud target
+
+Open `Ballerina.toml` and set the cloud target:
+
+```toml
+[build-options]
+cloud = "k8s"
+```
+
+### Step 2: Configure the deployment
+
+Create a `Cloud.toml` with your ECR repository as the image repository so the generated Kubernetes manifests reference the correct image URI:
 
 ```toml
 [container.image]
 repository = "<account-id>.dkr.ecr.<region>.amazonaws.com"
 name = "my-integration"
 tag = "v1.0.0"
+
+[cloud.deployment]
+min_memory = "100Mi"
+max_memory = "256Mi"
+min_cpu = "500m"
+max_cpu = "500m"
+
+[cloud.deployment.autoscaling]
+min_replicas = 2
+max_replicas = 5
+cpu = 60
+
+[[cloud.config.files]]
+file = "./Config.toml"
+
+[cloud.deployment.probes.liveness]
+port = 9091
+path = "/probes/healthz"
+
+[cloud.deployment.probes.readiness]
+port = 9091
+path = "/probes/readyz"
 ```
 
-Build the image for `linux/amd64` to match EKS node architecture (required when building on Apple Silicon or other ARM machines):
+### Step 3: Build
 
 ```bash
+bal build
+```
+
+This generates the Kubernetes manifests under `target/kubernetes/my_integration/` and the Docker build context under `target/docker/my_integration/`.
+
+### Step 4: Build and push the image for linux/amd64
+
+EKS nodes run on `x86_64`. If you are building on Apple Silicon or another ARM machine, use `docker buildx` on the generated build context to produce a `linux/amd64` image and push it directly to ECR:
+
+```bash
+aws ecr get-login-password --region <region> | \
+  docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
+
 docker buildx build \
   --platform linux/amd64 \
   --tag <account-id>.dkr.ecr.<region>.amazonaws.com/my-integration:v1.0.0 \
@@ -546,27 +594,16 @@ docker buildx build \
   target/docker/my_integration/
 ```
 
-:::note
-`bal build` generates the `target/docker/my_integration/` directory containing the Dockerfile and all JARs. Use this directory with `docker buildx` when you need to target a different platform than your build machine.
+:::tip
+If your build machine is already `x86_64`, you can skip the `docker buildx` step and use `docker push` on the image built by `bal build` instead.
 :::
 
-### Step 2: Push the image to ECR
+### Step 5: Configure VPC endpoints for private clusters
 
-Authenticate Docker to ECR and push:
-
-```bash
-aws ecr get-login-password --region <region> | \
-  docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
-
-docker push <account-id>.dkr.ecr.<region>.amazonaws.com/my-integration:v1.0.0
-```
-
-### Step 3: Configure VPC endpoints for private clusters
-
-EKS nodes in private subnets have no internet access, so they cannot reach ECR's public endpoints. Create three VPC endpoints to allow image pulls without a NAT gateway:
+EKS nodes in private subnets cannot reach ECR's public endpoints without a NAT gateway. Create three VPC endpoints to allow image pulls over private networking:
 
 ```bash
-# ECR API endpoint (for authentication and manifest requests)
+# ECR API endpoint (authentication and manifest requests)
 aws ec2 create-vpc-endpoint --region <region> \
   --vpc-id <vpc-id> \
   --service-name com.amazonaws.<region>.ecr.api \
@@ -575,7 +612,7 @@ aws ec2 create-vpc-endpoint --region <region> \
   --security-group-ids <security-group-id> \
   --private-dns-enabled
 
-# ECR DKR endpoint (for image layer pulls)
+# ECR DKR endpoint (image layer pulls)
 aws ec2 create-vpc-endpoint --region <region> \
   --vpc-id <vpc-id> \
   --service-name com.amazonaws.<region>.ecr.dkr \
@@ -596,12 +633,19 @@ aws ec2 create-vpc-endpoint --region <region> \
 Skip this step if your nodes have internet access via a NAT gateway or if you are using a public EKS cluster.
 :::
 
-### Step 4: Deploy
-
-Update the image reference in the generated manifest to use your ECR URI, then apply:
+### Step 6: Deploy
 
 ```bash
 kubectl apply -f target/kubernetes/my_integration/
+```
+
+Expected output:
+
+```
+service/my-integration created
+configmap/config-config-map created
+deployment.apps/my-integration-deployment created
+horizontalpodautoscaler.autoscaling/my-integration created
 ```
 
 Verify the pods come up:
@@ -612,20 +656,16 @@ kubectl get services
 kubectl logs -f deployment/my-integration-deployment
 ```
 
-### Step 5: Expose and access the service
+### Step 7: Expose and test
 
-Tag the subnets used by your EKS cluster so the AWS load balancer controller can discover them:
+Tag the cluster subnets so the EKS load balancer controller can discover them, then create an internal Network Load Balancer:
 
 ```bash
 aws ec2 create-tags --region <region> \
   --resources <subnet-id-1> <subnet-id-2> \
   --tags Key=kubernetes.io/role/internal-elb,Value=1 \
          Key=kubernetes.io/cluster/<cluster-name>,Value=shared
-```
 
-Create an internal Network Load Balancer:
-
-```bash
 kubectl expose deployment my-integration-deployment \
   --type=LoadBalancer \
   --name=my-integration-lb \
@@ -643,8 +683,8 @@ kubectl get svc my-integration-lb
 ```
 
 ```
-NAME                TYPE           CLUSTER-IP      EXTERNAL-IP                                          PORT(S)          AGE
-my-integration-lb   LoadBalancer   10.100.160.80   <nlb-hostname>.elb.<region>.amazonaws.com            9090:31659/TCP   30s
+NAME                TYPE           CLUSTER-IP      EXTERNAL-IP                                      PORT(S)          AGE
+my-integration-lb   LoadBalancer   10.100.160.80   <nlb-hostname>.elb.<region>.amazonaws.com        9090:31659/TCP   30s
 ```
 
 Call the service from within the VPC:
