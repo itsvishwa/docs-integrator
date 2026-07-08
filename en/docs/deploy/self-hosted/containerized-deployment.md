@@ -641,7 +641,7 @@ kubectl apply -f target/kubernetes/my_integration/
 
 Expected output:
 
-```
+```bash
 service/my-integration created
 configmap/config-config-map created
 deployment.apps/my-integration-deployment created
@@ -682,7 +682,7 @@ Wait for the NLB hostname to be assigned:
 kubectl get svc my-integration-lb
 ```
 
-```
+```bash
 NAME                TYPE           CLUSTER-IP      EXTERNAL-IP                                      PORT(S)          AGE
 my-integration-lb   LoadBalancer   10.100.160.80   <nlb-hostname>.elb.<region>.amazonaws.com        9090:31659/TCP   30s
 ```
