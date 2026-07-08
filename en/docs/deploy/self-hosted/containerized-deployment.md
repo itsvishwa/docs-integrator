@@ -15,6 +15,7 @@ The Code to Cloud feature supports the following containerized deployment platfo
 - **[Docker](#docker-deployment)** — Build and run containerized applications locally or on any Docker-compatible runtime
 - **[Kubernetes](#kubernetes-deployment)** — Deploy to any Kubernetes cluster with auto-generated manifests, services, and autoscaling configurations
 - **[Red Hat OpenShift](#red-hat-openshift-deployment)** — Deploy to OpenShift using the `oc` CLI with platform-specific manifests
+- **[Amazon EKS](#amazon-eks-deployment)** — Deploy to AWS Elastic Kubernetes Service using ECR for image hosting and an internal NLB for service access
 
 :::info Prerequisites
 - [Docker](https://www.docker.com/) installed and running on your build machine
@@ -510,4 +511,148 @@ curl http://<cluster-ip>:<node-port>/<your-service-path>
 
 :::tip
 Code to Cloud does not expose every OpenShift configuration option. For changes beyond what `Cloud.toml` supports, use [Kustomize](https://kustomize.io/) to patch the generated YAML without modifying it directly. This keeps generated files untouched and makes upgrades easier when you rebuild.
+:::
+
+## Amazon EKS deployment
+
+Amazon Elastic Kubernetes Service (EKS) follows the same Kubernetes deployment path described above, with a few AWS-specific steps: pushing the image to Amazon ECR, configuring VPC endpoints for private clusters, and exposing the service via an AWS Network Load Balancer.
+
+### Prerequisites
+
+In addition to the [general prerequisites](#prerequisites), you need:
+
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-clarkiv.html) installed and configured (`aws configure` or SSO login)
+- An EKS cluster with `kubectl` configured against it: `aws eks update-kubeconfig --region <region> --name <cluster-name>`
+- An [Amazon ECR](https://aws.amazon.com/ecr/) repository for your image
+
+### Step 1: Set the cloud target and build
+
+Set the cloud target to `k8s` and build with your ECR repository as the image repository:
+
+```toml
+[container.image]
+repository = "<account-id>.dkr.ecr.<region>.amazonaws.com"
+name = "my-integration"
+tag = "v1.0.0"
+```
+
+Build the image for `linux/amd64` to match EKS node architecture (required when building on Apple Silicon or other ARM machines):
+
+```bash
+docker buildx build \
+  --platform linux/amd64 \
+  --tag <account-id>.dkr.ecr.<region>.amazonaws.com/my-integration:v1.0.0 \
+  --push \
+  target/docker/my_integration/
+```
+
+:::note
+`bal build` generates the `target/docker/my_integration/` directory containing the Dockerfile and all JARs. Use this directory with `docker buildx` when you need to target a different platform than your build machine.
+:::
+
+### Step 2: Push the image to ECR
+
+Authenticate Docker to ECR and push:
+
+```bash
+aws ecr get-login-password --region <region> | \
+  docker login --username AWS --password-stdin <account-id>.dkr.ecr.<region>.amazonaws.com
+
+docker push <account-id>.dkr.ecr.<region>.amazonaws.com/my-integration:v1.0.0
+```
+
+### Step 3: Configure VPC endpoints for private clusters
+
+EKS nodes in private subnets have no internet access, so they cannot reach ECR's public endpoints. Create three VPC endpoints to allow image pulls without a NAT gateway:
+
+```bash
+# ECR API endpoint (for authentication and manifest requests)
+aws ec2 create-vpc-endpoint --region <region> \
+  --vpc-id <vpc-id> \
+  --service-name com.amazonaws.<region>.ecr.api \
+  --vpc-endpoint-type Interface \
+  --subnet-ids <subnet-id-1> <subnet-id-2> \
+  --security-group-ids <security-group-id> \
+  --private-dns-enabled
+
+# ECR DKR endpoint (for image layer pulls)
+aws ec2 create-vpc-endpoint --region <region> \
+  --vpc-id <vpc-id> \
+  --service-name com.amazonaws.<region>.ecr.dkr \
+  --vpc-endpoint-type Interface \
+  --subnet-ids <subnet-id-1> <subnet-id-2> \
+  --security-group-ids <security-group-id> \
+  --private-dns-enabled
+
+# S3 gateway endpoint (ECR stores image layers in S3)
+aws ec2 create-vpc-endpoint --region <region> \
+  --vpc-id <vpc-id> \
+  --service-name com.amazonaws.<region>.s3 \
+  --vpc-endpoint-type Gateway \
+  --route-table-ids <route-table-id>
+```
+
+:::tip
+Skip this step if your nodes have internet access via a NAT gateway or if you are using a public EKS cluster.
+:::
+
+### Step 4: Deploy
+
+Update the image reference in the generated manifest to use your ECR URI, then apply:
+
+```bash
+kubectl apply -f target/kubernetes/my_integration/
+```
+
+Verify the pods come up:
+
+```bash
+kubectl get pods
+kubectl get services
+kubectl logs -f deployment/my-integration-deployment
+```
+
+### Step 5: Expose and access the service
+
+Tag the subnets used by your EKS cluster so the AWS load balancer controller can discover them:
+
+```bash
+aws ec2 create-tags --region <region> \
+  --resources <subnet-id-1> <subnet-id-2> \
+  --tags Key=kubernetes.io/role/internal-elb,Value=1 \
+         Key=kubernetes.io/cluster/<cluster-name>,Value=shared
+```
+
+Create an internal Network Load Balancer:
+
+```bash
+kubectl expose deployment my-integration-deployment \
+  --type=LoadBalancer \
+  --name=my-integration-lb \
+  --port=9090 --target-port=9090
+
+kubectl annotate svc my-integration-lb \
+  service.beta.kubernetes.io/aws-load-balancer-scheme=internal \
+  service.beta.kubernetes.io/aws-load-balancer-type=nlb
+```
+
+Wait for the NLB hostname to be assigned:
+
+```bash
+kubectl get svc my-integration-lb
+```
+
+```
+NAME                TYPE           CLUSTER-IP      EXTERNAL-IP                                          PORT(S)          AGE
+my-integration-lb   LoadBalancer   10.100.160.80   <nlb-hostname>.elb.<region>.amazonaws.com            9090:31659/TCP   30s
+```
+
+Call the service from within the VPC:
+
+```bash
+curl http://<nlb-hostname>.elb.<region>.amazonaws.com:9090/<your-service-path>
+```
+
+:::note
+An internal NLB is only reachable from within the same VPC. For internet-facing access, replace `internal-elb` with `elb` in the subnet tag and change the annotation to `service.beta.kubernetes.io/aws-load-balancer-scheme=internet-facing`. Ensure the subnets have a route to an internet gateway.
 :::
