@@ -658,22 +658,42 @@ kubectl logs -f deployment/my-integration-deployment
 
 ### Step 7: Expose and test
 
-Tag the cluster subnets so the EKS load balancer controller can discover them, then create an internal Network Load Balancer:
+Tag the cluster subnets so the EKS load balancer controller can discover them:
 
 ```bash
 aws ec2 create-tags --region <region> \
   --resources <subnet-id-1> <subnet-id-2> \
   --tags Key=kubernetes.io/role/internal-elb,Value=1 \
          Key=kubernetes.io/cluster/<cluster-name>,Value=shared
+```
 
-kubectl expose deployment my-integration-deployment \
-  --type=LoadBalancer \
-  --name=my-integration-lb \
-  --port=9090 --target-port=9090
+If a service named `my-integration-lb` already exists, delete it first:
 
-kubectl annotate svc my-integration-lb \
-  service.beta.kubernetes.io/aws-load-balancer-scheme=internal \
-  service.beta.kubernetes.io/aws-load-balancer-type=nlb
+```bash
+kubectl delete svc my-integration-lb 2>/dev/null || true
+```
+
+Create an internal NLB with all annotations set at creation time:
+
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-integration-lb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+spec:
+  selector:
+    app: my_integration
+  type: LoadBalancer
+  ports:
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+EOF
 ```
 
 Wait for the NLB hostname to be assigned:
@@ -694,5 +714,5 @@ curl http://<nlb-hostname>.elb.<region>.amazonaws.com:9090/<your-service-path>
 ```
 
 :::note
-An internal NLB is only reachable from within the same VPC. For internet-facing access, replace `internal-elb` with `elb` in the subnet tag and change the annotation to `service.beta.kubernetes.io/aws-load-balancer-scheme=internet-facing`. Ensure the subnets have a route to an internet gateway.
+An internal NLB is only reachable from within the same VPC. For internet-facing access, replace `internal-elb` with `elb` in the subnet tag and set `aws-load-balancer-scheme` to `internet-facing` in the Service manifest. Ensure the subnets have a route to an internet gateway.
 :::
