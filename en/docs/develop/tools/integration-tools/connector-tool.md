@@ -9,7 +9,7 @@ description: Generate production-ready Ballerina connectors from OpenAPI specifi
 :::note Pre-Release
 :::
 
-The `bal connector` tool automates the full lifecycle of building a Ballerina connector from an OpenAPI specification. It runs a five-stage pipeline (sanitizing the spec, generating and validating a typed client, creating tests and usage examples, and producing documentation) using Anthropic Claude to handle AI-assisted steps such as fixing compilation errors, generating realistic examples, and filling in missing operation identifiers.
+The `bal connector` tool automates the full lifecycle of building a Ballerina connector from an OpenAPI specification. It runs a five-stage pipeline (sanitizing the spec, generating and validating a typed client, creating tests and usage examples, and producing documentation) using an LLM to handle AI-assisted steps such as fixing compilation errors, generating realistic examples, and filling in missing operation identifiers.
 
 ## Prerequisites
 
