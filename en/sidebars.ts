@@ -56,6 +56,7 @@ const sidebars: SidebarsConfig = {
             'get-started/build-integration-api',
             'get-started/build-event-driven-integration',
             'get-started/build-file-driven-integration',
+            'get-started/prebuilt-integrations',
           ],
         },
       ],
