@@ -43,7 +43,7 @@ The list narrows to the applications Salesforce can be paired with. Select **Goo
 
 ## Step 4: Choose an integration scenario
 
-Every application pair has one or more ready-made scenarios, and the set available for a given pair grows as new use cases are added. Let's select the **Export Salesforce Leads to a Google Sheet** automation.
+Every application pair has one or more ready-made scenarios, and the set available for a given pair grows as new use cases are added. Select the **Export Salesforce Leads to a Google Sheet** integration.
 
 ![List of integration scenarios for Salesforce and Google Sheets, with Export Salesforce Leads to a Google Sheet selected](/img/get-started/prebuilt-integrations/select-integration.png)
 
