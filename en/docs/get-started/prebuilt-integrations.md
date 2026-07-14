@@ -1,7 +1,7 @@
 ---
 sidebar_position: 12
 title: "Prebuilt Integrations"
-description: Deploy production-ready prebuilt integrations for common cross-application use cases on WSO2 Cloud in seconds, without building an integration from scratch.
+description: Use prebuilt integrations to connect your applications and automate common use cases on WSO2 Cloud in minutes — without building an integration from scratch.
 keywords: [wso2 integrator, wso2 cloud, prebuilt integration, devant, salesforce, google sheets, automation, quick start]
 ---
 
