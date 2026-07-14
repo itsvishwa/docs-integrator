@@ -31,7 +31,7 @@ Log in to [WSO2 Cloud](https://console.devant.dev), then create a project and na
 
 ## Step 2: Pick the first application
 
-Choose the application you want to integrate from. The catalog currently covers ten applications: Salesforce, Google Sheets, Shopify, Stripe, Google Chat, GitHub, Slack, Mailchimp, Jira, and QuickBooks. For this demonstration, select **Salesforce**.
+Choose the application you want to integrate from. The catalog currently includes Salesforce, Google Sheets, Shopify, Stripe, Google Chat, GitHub, Slack, Mailchimp, Jira, and QuickBooks, with more applications added over time. For this demonstration, select **Salesforce**.
 
 ![Application selection screen with Salesforce selected as the first application](/img/get-started/prebuilt-integrations/select-salesforce.png)
 
@@ -73,7 +73,7 @@ From here, you can manage, deploy, and observe this integration just like any ot
 
 ## Step 7: Make it yours
 
-To customize the integration, go to the overview page. Select **Open in Cloud** to edit the integration in low-code or pro-code view, right in the cloud editor. Or select **Open in Integrator** to edit the project locally in WSO2 Integrator IDE instead. Edit however you're most comfortable, then push the result to your own repository. At that point, it's fully yours, the same as any integration you built from scratch.
+To customize the integration, go to the overview page. Select **Open in Cloud** to edit the integration in low-code or pro-code view, right in the cloud editor. Or select **Open in Integrator** to edit the integration locally in WSO2 Integrator IDE instead. Edit however you're most comfortable, then push the result to your own repository. At that point, it's fully yours, the same as any integration you built from scratch.
 
 ![Integration overview page with the Open in Cloud and Open in Integrator options](/img/get-started/prebuilt-integrations/cloud-editor.png)
 
